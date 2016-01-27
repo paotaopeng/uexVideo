@@ -116,7 +116,7 @@ public class EUExVideo extends EUExBase implements Parcelable{
 	 * 
 	 * @param parm
 	 */
-	public void creatPlay(final String[] params){
+	public void createPlay(final String[] params){
 		
 		if (params.length < 5) {
 			return;
