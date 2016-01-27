@@ -6,7 +6,9 @@
         className="org.zywx.wbpalmstar.plugin.uexvideo.EUExVideo"
         uexName="uexVideo" >
         <method name="open" />
+        <method name="creatPlay" />
         <method name="record" />
+        <method name="removePlay" />
     </plugin>
      <plugin
         className="org.zywx.wbpalmstar.plugin.uexfilemgr.EUExFileMgr"

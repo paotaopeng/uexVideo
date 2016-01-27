@@ -61,7 +61,13 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-
+        
+         <activity
+            android:name="org.zywx.wbpalmstar.plugin.uexvideo.VideoPlayerActivityForViewToWeb"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+		<!-- uexVideo end -->
         
        <receiver android:name="org.zywx.wbpalmstar.platform.analytics.PushBroadCastReceiver">
 			<intent-filter>
