@@ -174,10 +174,6 @@ public class EUExVideo extends EUExBase implements Parcelable{
                         return;
                     }
                     Intent intent = new Intent();
-                    String realPath = BUtility.makeRealPath(config.getSrc(), mBrwView);
-                    //文件路径
-                    Uri url = Uri.parse(realPath);
-                    intent.setData(url);
                     intent.putExtra("playerConfig", config);
                     intent.putExtra("EUExVideo", EUExVideo.this);
                     intent.setClass(mContext, VideoPlayerActivityForViewToWeb.class);

@@ -35,6 +35,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -175,17 +176,22 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
 				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		final Intent intent = getIntent();
-		if (intent == null || intent.getData() == null) {// 路径不存在
-			alertMessage(finder.getString("plugin_video_file_path_is_not_exist"), true);
+		if (intent == null ||  ((VideoPlayerConfig)intent.getSerializableExtra("playerConfig")) == null) {// 路径不存在
+            alertMessage("invalid params", true);
 			return;
 		}
         VideoPlayerConfig config = (VideoPlayerConfig)intent.getSerializableExtra("playerConfig");
-		x_activity = config.getX();
+        videoPath = config.getSrc();
+        if (TextUtils.isEmpty(videoPath)) {
+            Log.i(TAG, "[invalid params]: videoPath can not be null");
+            alertMessage("invalid params", true);
+        }
+
+        x_activity = config.getX();
 		y_activity = config.getY();
-		w_activity = config.getWidth();
-		h_activity = config.getHeight();
+        w_activity = config.getWidth();
+        h_activity = config.getHeight();
 		mUexBaseObj = intent.getParcelableExtra("EUExVideo");
-		videoPath = intent.getData().toString();
         startTime = config.getStartTime();
         autoStart = config.getAutoStart();
         showScaleButton = config.getShowScaleButton();
