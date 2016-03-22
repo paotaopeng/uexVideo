@@ -5,38 +5,30 @@
     android:background="@android:color/black" >
 
     <!-- 视频播放层 -->
-
     <SurfaceView
         android:id="@+id/plugin_video_player_sv_diaplay"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerInParent="true" />
 
-    <!-- 头 -->
 
-    <LinearLayout
-        android:id="@+id/plugin_video_player_top_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="33dip"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/plugin_video_top_bg_shape"
-        android:gravity="center_vertical"
-        android:orientation="horizontal" >
+    <!--左上角的close button-->
+    <ImageView
+        android:id="@+id/plugin_video_player_iv_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/plugin_video_close"
+        android:visibility="gone"/>
 
-        <SeekBar
-            android:id="@+id/plugin_video_player_sb_timeline"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="100"
-            android:maxHeight="4dip"
-            android:paddingLeft="4dip"
-            android:paddingRight="4dip"
-            android:progress="0"
-            android:progressDrawable="@drawable/plugin_video_seekbar_style"
-            android:thumb="@drawable/plugin_video_seekbar_thumb_selector"
-            android:visibility="visible" />
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/plugin_video_iv_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/plugin_video_progress_icon"
+        android:visibility="visible" />
 
     <!-- 下部控制按钮 -->
 
@@ -47,43 +39,6 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/plugin_video_bottom_bg_shape" >
 
-        <LinearLayout
-            android:id="@+id/plugin_video_player_ll_center_contrl"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:gravity="center"
-            android:orientation="horizontal" >
-
-            <!-- 返回 -->
-
-            <ImageView
-                android:id="@+id/plugin_video_player_iv_back"
-                android:layout_width="wrap_content"
-                android:layout_height="50dip"
-                android:layout_marginLeft="20dip"
-                android:background="@drawable/plugin_video_back_selector"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/plugin_video_player_left_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dip"
-                android:layout_marginRight="3dip"
-                android:background="@drawable/plugin_video_arrow_left"
-                android:visibility="gone" />
-            <!-- 快退 -->
-
-            <ImageView
-                android:id="@+id/plugin_video_player_quick_pre_step"
-                android:layout_width="50dip"
-                android:layout_height="50dip"
-                android:layout_marginLeft="3dip"
-                android:layout_marginRight="3dip"
-                android:background="@drawable/plugin_video_pre_selector"
-                android:visibility="gone" />
-            <!-- 播放暂停 -->
-
             <ImageView
                 android:id="@+id/plugin_video_player_play_pause"
                 android:layout_width="50dip"
@@ -91,62 +46,51 @@
                 android:layout_marginLeft="3dip"
                 android:layout_marginRight="3dip"
                 android:background="@drawable/plugin_video_pause_selector" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@id/plugin_video_player_play_pause"
+                android:layout_toLeftOf="@+id/plugin_video_player_iv_screen_adjust"
+                android:orientation="vertical">
+                <!-- 时间 -->
+                <TextView
+                    android:id="@+id/plugin_video_player_tv_pass_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dip"
+                    android:layout_marginRight="4dip"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="00:00"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp" />
 
-            <!-- 时间 -->
+                <LinearLayout
+                    android:id="@+id/plugin_video_player_top_layout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="33dip"
+                    android:layout_alignParentTop="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
 
-            <TextView
-                android:id="@+id/plugin_video_player_tv_pass_time"
-                android:layout_width="wrap_content"
-                android:layout_height="20dip"
-                android:layout_marginLeft="4dip"
-                android:layout_marginRight="4dip"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="00:00"
-                android:textColor="@android:color/white"
-                android:textSize="14sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="20dip"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="/"
-                android:textColor="@android:color/white"
-                android:textSize="14sp" />
+                    <SeekBar
+                        android:id="@+id/plugin_video_player_sb_timeline"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="100"
+                        android:maxHeight="4dip"
+                        android:paddingLeft="4dip"
+                        android:paddingRight="4dip"
+                        android:progress="0"
+                        android:progressDrawable="@drawable/plugin_video_seekbar_style"
+                        android:thumb="@drawable/plugin_video_seekbar_thumb_selector" />
 
-            <TextView
-                android:id="@+id/plugin_video_player_tv_total_time"
-                android:layout_width="wrap_content"
-                android:layout_height="20dip"
-                android:layout_marginLeft="4dip"
-                android:layout_marginRight="4dip"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="00:00"
-                android:textColor="@android:color/white"
-                android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
 
-            <!-- 快进 -->
-
-            <ImageView
-                android:id="@+id/plugin_video_player_quick_next_step"
-                android:layout_width="50dip"
-                android:layout_height="50dip"
-                android:layout_marginLeft="3dip"
-                android:layout_marginRight="3dip"
-                android:background="@drawable/plugin_video_next_selector"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/plugin_video_player_right_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dip"
-                android:layout_marginRight="3dip"
-                android:background="@drawable/plugin_video_arrow_right"
-                android:visibility="gone" />
-        </LinearLayout>
         <!-- 调整屏幕 -->
 
         <ImageView

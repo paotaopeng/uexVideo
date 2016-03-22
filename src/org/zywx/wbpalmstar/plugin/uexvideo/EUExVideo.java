@@ -17,55 +17,56 @@
  */
 package org.zywx.wbpalmstar.plugin.uexvideo;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import android.app.Activity;
+import android.app.LocalActivityManager;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AbsoluteLayout;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.ResoureFinder;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
+import org.zywx.wbpalmstar.plugin.uexvideo.lib.VideoCaptureActivity;
+import org.zywx.wbpalmstar.plugin.uexvideo.lib.configuration.CaptureConfiguration;
+import org.zywx.wbpalmstar.plugin.uexvideo.lib.configuration.PredefinedCaptureConfigurations;
 
-import android.app.Activity;
-import android.app.LocalActivityManager;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.Window;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @SuppressWarnings("deprecation")
 public class EUExVideo extends EUExBase implements Parcelable{
 
     public static final int F_ACT_REQ_CODE_UEX_VIDEO_RECORD = 5;
-    public static final String F_CALLBACK_NAME_VIDEO_RECORD = "uexVideo.cbRecord";
-    public static final String F_CALLBACK_NAME_VIDEO_ONCOMPLETION = "uexVideo.onCompletion";
+    public static final String F_CALLBACK_NAME_VIDEO_RECORD_FINISH = "uexVideo.onRecordFinish";
+    public static final String F_CALLBACK_ON_PLAYER_CLOSE = "uexVideo.onPlayerClose";
+    public static final String F_CALLBACK_ON_PLAYER_STATUS_CHANGE = "uexVideo.onPlayerStatusChange";
+
 
     private ResoureFinder finder;
 
-    private File m_tempPath;
-    private boolean mWillCompress;
-    
     private View mMapDecorView;
 	private static LocalActivityManager mgr;
-	private int x = 0;
-	private int y = 0;
-	private int w = 0;
-	private int h = 0;
+    private String TAG = "EUExVideo";
+
+    private boolean scrollWithWeb = false;
+
+    private String ViewoPlayerViewTag = "Video_Player_View";
 
     public EUExVideo(Context context, EBrowserView inParent) {
         super(context, inParent);
@@ -80,15 +81,12 @@ public class EUExVideo extends EUExBase implements Parcelable{
 	
 	public static void onActivityPause(Context context){
 		if(mgr != null){
-			mgr.dispatchPause(((Activity)context).isFinishing());
+			mgr.dispatchPause(((Activity) context).isFinishing());
 		}
 	}
 	
 	/**
 	 * 打开视频播放器
-	 * 
-	 * @param inPath
-	 *            文件所在路径
 	 */
     public void open(String[] params) {
         if (params.length < 1) {
@@ -113,72 +111,111 @@ public class EUExVideo extends EUExBase implements Parcelable{
 	
 	/**
 	 * 打开视频播放器(新的view)
-	 * 
-	 * @param parm
+	 *
 	 */
-	public void createPlay(final String[] params){
-		
-		if (params.length < 5) {
-			return;
-		}
-		try {
-			x = (int) Float.parseFloat(params[0]);
-			y = (int) Float.parseFloat(params[1]);
-			w = (int) Float.parseFloat(params[2]);
-			h = (int) Float.parseFloat(params[3]);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-		
-		((Activity)mContext).runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				if(mMapDecorView != null){
-					Log.i("uexVideo", "already open");
-					return;
-				}
-				Intent intent = new Intent();
-				String fullPath = params[4];
-				Log.i("uexVideo", fullPath);
-				if (fullPath == null || fullPath.length() == 0) {
-					errorCallback(0,
-							EUExCallback.F_ERROR_CODE_VIDEO_OPEN_ARGUMENTS_ERROR,
-							finder.getString("path_error"));
-					Log.i("uexVideo", "path_error");
-					return;
-				}
-				//fullPath = "http://mp4.mtvxz.cc/troublemaker-troublemaker%5Bj-star%5D%5B%E9%9F%A9%5D%5Bwww.mtvxz.cn%5D.mp4";
-				//fullPath = "http://live.cqnews.net/live-m/manifest.m3u8";
-				String realPath = BUtility.makeRealPath(fullPath, mBrwView);
-		        Uri url = Uri.parse(realPath);
-				intent.setData(url);
-		        intent.putExtra("x", x);
-		        intent.putExtra("y", y);
-		        intent.putExtra("w", w);
-		        intent.putExtra("h", h);
-		        intent.putExtra("EUExVideo", EUExVideo.this);
-				intent.setClass(mContext, VideoPlayerActivityForViewToWeb.class);
-				//mContext.startActivity(intent);
-				if (mgr == null) {
-					mgr = new LocalActivityManager((Activity) mContext, true);
-					mgr.dispatchCreate(null);
-				}
-				Window window = mgr.startActivity("TAG_Video", intent);
-				mMapDecorView = window.getDecorView();
-				RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-						w,h
-						//RelativeLayout.LayoutParams.MATCH_PARENT,
-						//RelativeLayout.LayoutParams.MATCH_PARENT
-						);
-				lp.leftMargin = x;
-				lp.topMargin = y;
-				addView2CurrentWindow(mMapDecorView, lp);
-			}
-		});
+	public void openPlayer(final String[] params) {
+        if (params == null || params.length < 1) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        WindowManager wm = ((Activity)mContext).getWindowManager();
+
+        int screenWidth = wm.getDefaultDisplay().getWidth();
+        int screenHeight = wm.getDefaultDisplay().getHeight();
+        Log.i(TAG, "screenWidth:" + screenWidth + "     screenHeight:" + screenHeight);
+        String json = params[0];
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(json);
+            String src = jsonObject.getString("src");
+            if (TextUtils.isEmpty(src)) {
+                errorCallback(0, EUExCallback.F_ERROR_CODE_VIDEO_OPEN_ARGUMENTS_ERROR, finder.getString("path_error"));
+                Log.i(TAG, "src is empty");
+                return;
+            }
+            int startTime = jsonObject.optInt("startTime", 0);
+            boolean autoStart = jsonObject.optBoolean("autoStart", false);
+            boolean forceFullScreen = jsonObject.optBoolean("forceFullScreen", false);
+            boolean showCloseButton = jsonObject.optBoolean("showCloseButton", false);
+            boolean showScaleButton = jsonObject.optBoolean("showScaleButton", false);
+
+            final int width = jsonObject.optInt("width", screenWidth);
+            final int height = jsonObject.optInt("height", screenHeight);
+            final int x = jsonObject.optInt("x", 0);
+            final int y = jsonObject.optInt("y", 0);
+            scrollWithWeb = jsonObject.optBoolean("scrollWithWeb", true);
+
+            //如果设置了强制全屏，则一定要显示"关闭"按钮，不显示scaleButton, 不允许跟随网页滑动。
+            if (forceFullScreen) {
+                showCloseButton = true;
+                showScaleButton = false;
+                scrollWithWeb = false;
+            }
+            final VideoPlayerConfig config = new VideoPlayerConfig();
+            config.setX(x);
+            config.setY(y);
+            config.setWidth(width);
+            config.setHeight(height);
+            config.setSrc(src);
+            config.setStartTime(startTime);
+            config.setAutoStart(autoStart);
+            config.setForceFullScreen(forceFullScreen);
+            config.setShowCloseButton(showCloseButton);
+            config.setShowScaleButton(showScaleButton);
+            config.setScrollWithWeb(scrollWithWeb);
+
+
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (mMapDecorView != null) {
+                        Log.i("uexVideo", "already open");
+                        return;
+                    }
+                    Intent intent = new Intent();
+                    String realPath = BUtility.makeRealPath(config.getSrc(), mBrwView);
+                    //文件路径
+                    Uri url = Uri.parse(realPath);
+                    intent.setData(url);
+                    intent.putExtra("playerConfig", config);
+                    intent.putExtra("EUExVideo", EUExVideo.this);
+                    intent.setClass(mContext, VideoPlayerActivityForViewToWeb.class);
+                    //mContext.startActivity(intent);
+                    if (mgr == null) {
+                        mgr = new LocalActivityManager((Activity) mContext, true);
+                        mgr.dispatchCreate(null);
+                    }
+                    Window window = mgr.startActivity("TAG_Video", intent);
+                    mMapDecorView = window.getDecorView();
+
+                    RelativeLayout.LayoutParams lp;
+                    if (config.getForceFullScreen()) {
+                        lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                                RelativeLayout.LayoutParams.MATCH_PARENT);
+                        lp.leftMargin = 0;
+                        lp.topMargin = 0;
+                    } else {
+                        lp = new RelativeLayout.LayoutParams(width, height);
+                        lp.leftMargin = x;
+                        lp.topMargin = y;
+                    }
+                    if (config.getScrollWithWeb()) {
+                        AbsoluteLayout.LayoutParams layoutParams = new AbsoluteLayout.LayoutParams(width, height, x, y);
+                        addViewToWebView(mMapDecorView, layoutParams, "Video_Player_View");
+                    } else {
+                        addView2CurrentWindow(mMapDecorView, lp);
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            Log.i(TAG, e.getMessage());
+        }
+
+
 	}
-	
+
+
 	/**
 	 * @param child
 	 * @param parms
@@ -196,57 +233,108 @@ public class EUExVideo extends EUExBase implements Parcelable{
 		// adptLayoutParams(parms, lp);
 		// Log.i(TAG, "addView2CurrentWindow");
 		mBrwView.addViewToCurrentWindow(child, lp);
-	}
-	
-	public void removePlay(String[] parm){
-		((Activity)mContext).runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				if(mMapDecorView != null){
-					removeViewFromCurrentWindow(mMapDecorView);
-					mMapDecorView = null;
-					mgr.destroyActivity("TAG_Video", true);
-				}
-			}
-		});
+
 	}
 
-    public void record(String[] params) {
-        if (!mWillCompress) {
-            String path = mBrwView.getCurrentWidget().getWidgetPath()
-                    + getNmae();
-            String sdPath = Environment.getExternalStorageDirectory()
-                    .getAbsolutePath();
-            if (path.indexOf(sdPath) == -1)
-                path = path.replace("/sdcard", sdPath);
-            m_tempPath = new File(path);
-        } else {
-            m_tempPath = new File(BUtility.getSdCardRootPath() + "demo.3gp");
-        }
-        if (m_tempPath != null && !m_tempPath.exists()) {
-            try {
-                m_tempPath.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+
+
+    /**
+     * 关闭播放器
+     */
+	public void closePlayer(String[] param){
+		((Activity)mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mMapDecorView != null) {
+                    if (scrollWithWeb) {
+                        removeViewFromWebView(ViewoPlayerViewTag);
+                    } else {
+                        removeViewFromCurrentWindow(mMapDecorView);
+                    }
+                    mMapDecorView = null;
+                    mgr.destroyActivity("TAG_Video", true);
+                }
             }
-        }
-        final Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        checkPath();
-        if (Build.VERSION.SDK_INT > 8) {
-            Uri fileUri = Uri.fromFile(m_tempPath);
-            // 创建保存视频的文件
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-            // 设置视频文件名
-        }
-        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);// high quality
+        });
+
+	}
+
+    public void closePlayerCallBack(String src, int progress) {
+        JSONObject jsonObject = new JSONObject();
         try {
+            jsonObject.put("src", src);
+            jsonObject.put("currentTime", progress); //返回的时间单位为秒
+            callBackPluginJs(EUExVideo.F_CALLBACK_ON_PLAYER_CLOSE, jsonObject.toString());
+        } catch (JSONException e) {
+            Log.i(TAG, String.valueOf(e.getMessage()));
+        }
+    }
+
+    public void record(String[] params) {
+        if (params == null || params.length < 1) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        String json = params[0];
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(json);
+            //默认无时间限制
+            int maxDuration = jsonObject.optInt("maxDuration", -1);
+            //默认输出的格式是mp4，Android当前支持mp4和3gp两种
+            String fileType = jsonObject.optString("fileType", "mp4");
+            //默认的采样频率为高采样率，录制的视屏质量高, 取值为0, 1, 2, 默认为0, 0: 高采样率, 1: 中采样率, 2: 低采样率
+            int rateType = jsonObject.optInt("bitRateType", 0);
+            //默认的视频尺寸 取值为0,1,2,默认为0。0:1920x1080, 1:1280x720, 2:640x480
+            int  qulityType = jsonObject.optInt("qulityType", 0);
+            PredefinedCaptureConfigurations.CaptureResolution resolution;
+            switch (qulityType) {
+                case 0:
+                    resolution = PredefinedCaptureConfigurations.CaptureResolution.RES_1080P;
+                    break;
+                case 1:
+                    resolution = PredefinedCaptureConfigurations.CaptureResolution.RES_720P;
+                    break;
+                case 2:
+                    resolution = PredefinedCaptureConfigurations.CaptureResolution.RES_480P;
+                    break;
+                default:
+                    resolution = PredefinedCaptureConfigurations.CaptureResolution.RES_1080P;
+                    break;
+            }
+            //控制采样率
+            PredefinedCaptureConfigurations.CaptureQuality bitRate;
+            switch (rateType) {
+                case 0:
+                    bitRate = PredefinedCaptureConfigurations.CaptureQuality.HIGH;
+                    break;
+                case 1:
+                    bitRate = PredefinedCaptureConfigurations.CaptureQuality.MEDIUM;
+                    break;
+                case 2:
+                    bitRate = PredefinedCaptureConfigurations.CaptureQuality.LOW;
+                    break;
+                default:
+                    bitRate = PredefinedCaptureConfigurations.CaptureQuality.HIGH;
+            }
+
+            CaptureConfiguration config = new CaptureConfiguration(resolution,
+                    bitRate, maxDuration, -1);
+            config.setOutputFormat(fileType);
+            String fileName = "temp.mp4";
+            if ("3gp".equalsIgnoreCase(fileType)) {
+                fileName = new Date().getTime() + ".3gp";
+            } else {
+                fileName = new Date().getTime() + ".mp4";
+            }
+
+            final Intent intent = new Intent(mContext, VideoCaptureActivity.class);
+            intent.putExtra(VideoCaptureActivity.EXTRA_CAPTURE_CONFIGURATION, config);
+            intent.putExtra(VideoCaptureActivity.EXTRA_OUTPUT_FILENAME, fileName);
             startActivityForResult(intent, F_ACT_REQ_CODE_UEX_VIDEO_RECORD);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(
-                    mContext,
-                    finder.getString("can_not_find_suitable_app_perform_this_operation"),
-                    Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            Log.i(TAG, e.getMessage());
         }
     }
 
@@ -275,27 +363,30 @@ public class EUExVideo extends EUExBase implements Parcelable{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == F_ACT_REQ_CODE_UEX_VIDEO_RECORD) {
-            if (resultCode != Activity.RESULT_OK) {
-                return;
-            }
-            String path = "";
-            if (null != data) {
-                path = data.getDataString();
-                Cursor c = ((Activity) mContext).managedQuery(data.getData(),
-                        null, null, null, null);
-                if (c != null) {
-                    c.moveToFirst();
-                    path = c.getString(c
-                            .getColumnIndex(MediaStore.Video.VideoColumns.DATA));
+            JSONObject jsonObject = new JSONObject();
+            try {
+                //录制成功
+                if (resultCode == Activity.RESULT_OK) {
+                    jsonObject.put("result", 0);
+                    jsonObject.put("path", data.getStringExtra(VideoCaptureActivity.EXTRA_OUTPUT_FILENAME));
+                    callBackPluginJs(F_CALLBACK_NAME_VIDEO_RECORD_FINISH, jsonObject.toString());
+                    return;
                 }
-            } else {
-                path = m_tempPath.getAbsolutePath();
+                //用户取消
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    jsonObject.put("result", 1);
+                    callBackPluginJs(F_CALLBACK_NAME_VIDEO_RECORD_FINISH, jsonObject.toString());
+                    return;
+                }
+                //操作出错
+                if (requestCode == VideoCaptureActivity.RESULT_ERROR) {
+                    jsonObject.put("result", 2);
+                    callBackPluginJs(F_CALLBACK_NAME_VIDEO_RECORD_FINISH, jsonObject.toString());
+                    return;
+                }
+            } catch (JSONException e) {
+                Log.i(TAG, e.getMessage());
             }
-            if (path.startsWith(BUtility.F_FILE_SCHEMA)) {
-                path = path.substring(BUtility.F_FILE_SCHEMA.length());
-            }
-            jsCallback(EUExVideo.F_CALLBACK_NAME_VIDEO_RECORD, 0,
-                    EUExCallback.F_C_TEXT, path);
         }
     }
 
@@ -313,5 +404,11 @@ public class EUExVideo extends EUExBase implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 	}
+
+    public void callBackPluginJs(String methodName, String jsonData){
+        String js = SCRIPT_HEADER + "if(" + methodName + "){"
+                + methodName + "('" + jsonData + "');}";
+        onCallback(js);
+    }
 
 }

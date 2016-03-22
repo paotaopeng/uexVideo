@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin uexName="uexVideo" version="3.0.5" build = "5">
-        <info>5:新增接口,实现自定义视频界面的大小和位置,支持扩展全屏,部分代码优化</info>
+    <plugin uexName="uexVideo" version="3.0.6" build = "6">
+        <info>6:优化视屏录制接口和视屏播放接口</info>
+        <build>5:新增接口,实现自定义视频界面的大小和位置,支持扩展全屏,部分代码优化</build>
         <build>4:删除无用资源</build>
         <build>3:修复不支持wgt协议的问题</build>
         <build>2:修复录制视频时模糊问题</build>

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
-  <head>
+<head>
     <title>
     </title>
     <meta charset="utf-8">
-        <meta name="viewport"
-        content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, user-scalable=no" />
-        <link rel="stylesheet" type="text/css" href="css/index.css">
+    <meta name="viewport"
+          content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="css/index.css">
     <link rel="stylesheet" href="css/ui-base.css">
     <link rel="stylesheet" href="css/ui-box.css">
     <link rel="stylesheet" href="css/ui-color.css">
-	<link rel="stylesheet" href="css/ui-res.css">
+    <link rel="stylesheet" href="css/ui-res.css">
     <link rel="stylesheet" href="css/ui-btn.css">
     <link rel="stylesheet" href="css/index.css">
     <script src="js/zy_control.js">
@@ -18,67 +18,88 @@
     <script src="js/zy_click.js">
     </script>
     <script type="text/javascript">
-		var cText = 0;
-var cJson = 1;
-var cInt = 2;
-
+var progress = 0;
+var localPath = "";
+var webPath = "http://baobab.wdjcdn.com/1456734464766B(13).mp4";
 window.uexOnload = function() {
-	uexVideo.cbRecord = function(opCode,dataType,data){
-		alert("recordCallback:"+dataType+","+data);
-		switch(dataType){
-			case cText:
-				document.getElementById('videorecord').innerHTML  = data;
-				document.getElementById('hidPath').value = data;
-			break;
-			case cJson:
-				alert("uex.cJSON");
-				break;
-			case cInt:
-				alert("uex.cInt");
-				break;
-			default:
-				alert("Error");
-		}
-	};
-	
-	uexVideo.onCompletion = function(){
-		console.log("createPlay video completion callback test : video play completion");
-	}
-	
-	uexFileMgr.cbExplorer=function (opCode,dataType,data){
-		document.getElementById('file').innerHTML = data;
-		document.getElementById('hidText').value = data;
-	}
-	uexWidgetOne.onError=function(opCode,errorCode,errorDesc){
-		alert(errorCode+":"+errorDesc);
-		}
+    uexVideo.onPlayerStatusChange = function(info){
+        //alert("onPlayerStatusChange:" + info);
+        var data = JSON.parse(info);
+        document.getElementById('info1').innerHTML  = "播放器状态:" + data.status;
+    }
+    uexVideo.onPlayerClose = function(info){
+        alert("onPlayerClosed:" + info);
+        var data = JSON.parse(info);
+        document.getElementById('info1').innerHTML  = "播放路径:" + data.src + "\n结束时的播放时间:" + data.currentTime;
+    }
+    uexVideo.onRecordFinish = function(info){
+        alert("onRecordFinish:" + info);
+        var data = JSON.parse(info);
+        localPath = data.path;
+        document.getElementById('info2').innerHTML  = "压缩进度:" + progress + "\n录制的视频地址:"+localPath;
+    }
+    uexVideo.onExportWithProgress = function(p){
+        progress = p;
+        document.getElementById('info2').innerHTML = "压缩进度:" + progress + "\n录制的视频地址:"+localPath;
+    }
 }
+    function recordVideo(){
+        var params={
+            maxDuration:document.getElementById('maxDuration').value,
+            qualityType:document.getElementById('qualityType').value,
+            bitRateType:document.getElementById('bitRateType').value,
+            fileType:document.getElementById('fileType').value,
+        }
+        uexVideo.record(JSON.stringify(params));
+    }
+    
+    function openPlayer(path){
+        var param = {
+            src:path,
+            startTime:1,
+            autoStart:true,
+            forceFullScreen:true,
+            showCloseButton:true,
+            showScaleButton:true,
+            width:320,
+            height:240,
+            x:10,
+            y:400, 
+            scrollWithWeb:true,
+        }
+        uexVideo.openPlayer(JSON.stringify(param));
+    }
 		</script>
-  </head>
+</head>
 <body class="um-vp " ontouchstart>
-	<div class="conbor">
-<div class="consj"><input class="btn" type="button" value="选择视频文件"
-	onclick="uexFileMgr.explorer('');"> <span>选择好的视频文件为：</span>
-<div class="tcxx" id="file"></div>
-<input id="hidText" type="hidden" value=""> <span>1.打开视频播放界面</span>
-<input class="btn" type="button" value="打开视频播放界面(createPlay)"
-	onclick="uexVideo.createPlay(50,50,500,1225,document.getElementById('hidText').value);">
-<input class="btn" type="button" value="打开视频播放界面(open)"
-	onclick="uexVideo.open(document.getElementById('hidText').value);">
-<span>2.录制视频</span> <input class="btn" type="button" value="录视频"
-	onclick="uexVideo.record();"> <span>录制好的视频文件地址为：</span>
-<div class="tcxx" id="videorecord"></div>
-<input type="hidden" id="hidPath"> <input class="btn"
-	type="button" value="播放选择的视频"
-	onclick="uexVideo.open(document.getElementById('hidPath').value);">
-	<br>
-	<input class="btn"
-	type="button" value="关闭(removePlay)"
-	onclick="uexVideo.removePlay();">
+<div class="conbor">
+
+
+    <span>1.打开播放器</span>
+    <input class="btn" type="button" value="打开播放器"
+           onclick="openPlayer(webPath);">
+    <div class="tcxx" id="info1"></div>
+    <span>2.关闭播放器</span>
+    <input class="btn" type="button" value="关闭"
+           onclick="uexVideo.closePlayer()">
+    <span>2.录制视频</span>
+    <div>maxDuration:</div><input class="textbox" type="text" id="maxDuration" value="10"></input>
+    <div>qualityType:</div><input class="textbox" type="text" id="qualityType" value="2"></input>
+    <div>bitRateType:</div><input class="textbox" type="text" id="bitRateType" value="2"></input>
+    <div>fileType:</div><input class="textbox" type="text" id="fileType" value="MP4"></input>
+    <input class="btn" type="button" value="录视频" onclick="recordVideo();">
+    <div class="tcxx" id="info2"></div>
+
+
+
+    <span>3.播放录制的视频</span>
+    <input class="btn" type="button" value="播放录制的视频"
+           onclick="openPlayer(localPath)">
+    <br>
+
 </div>
 </div>
 </body>
 <script>
-
 </script>
 </html>
