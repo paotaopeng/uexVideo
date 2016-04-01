@@ -110,8 +110,6 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="org.zywx.wbpalmstar.plugin.uexvideo.RecordVideoActivity" android:screenOrientation="landscape" >
-        </activity>
         <activity android:name="org.zywx.wbpalmstar.plugin.uexvideo.lib.VideoCaptureActivity"></activity>
     </application>
 
