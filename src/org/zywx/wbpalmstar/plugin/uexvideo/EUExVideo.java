@@ -78,13 +78,13 @@ public class EUExVideo extends EUExBase implements Parcelable{
 			mgr.dispatchResume();
 		}
 	}
-	
+
 	public static void onActivityPause(Context context){
 		if(mgr != null){
 			mgr.dispatchPause(((Activity) context).isFinishing());
 		}
 	}
-	
+
 	/**
 	 * 打开视频播放器
 	 */
@@ -108,7 +108,7 @@ public class EUExVideo extends EUExBase implements Parcelable{
         intent.setClass(mContext, VideoPlayerActivity.class);
         mContext.startActivity(intent);
 	}
-	
+
 	/**
 	 * 打开视频播放器(新的view)
 	 *
@@ -283,9 +283,9 @@ public class EUExVideo extends EUExBase implements Parcelable{
             //默认的采样频率为高采样率，录制的视屏质量高, 取值为0, 1, 2, 默认为0, 0: 高采样率, 1: 中采样率, 2: 低采样率
             int rateType = jsonObject.optInt("bitRateType", 0);
             //默认的视频尺寸 取值为0,1,2,默认为0。0:1920x1080, 1:1280x720, 2:640x480
-            int  qulityType = jsonObject.optInt("qulityType", 0);
+            int  qualityType = jsonObject.optInt("qualityType", 0);
             PredefinedCaptureConfigurations.CaptureResolution resolution;
-            switch (qulityType) {
+            switch (qualityType) {
                 case 0:
                     resolution = PredefinedCaptureConfigurations.CaptureResolution.RES_1080P;
                     break;
