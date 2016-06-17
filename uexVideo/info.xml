@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin uexName="uexVideo" version="3.0.7" build = "7">
-        <info>7:修正拼写错误</info>
+    <plugin uexName="uexVideo" version="4.0.0" build = "8">
+        <info>8:4.0</info>
+        <build>7:修正拼写错误</build>
         <build>6:优化视屏录制接口和视屏播放接口</build>
         <build>5:新增接口,实现自定义视频界面的大小和位置,支持扩展全屏,部分代码优化</build>
         <build>4:删除无用资源</build>
