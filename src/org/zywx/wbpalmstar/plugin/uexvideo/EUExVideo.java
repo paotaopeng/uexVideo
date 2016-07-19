@@ -56,6 +56,7 @@ public class EUExVideo extends EUExBase implements Parcelable{
     public static final String F_CALLBACK_NAME_VIDEO_RECORD_FINISH = "uexVideo.onRecordFinish";
     public static final String F_CALLBACK_ON_PLAYER_CLOSE = "uexVideo.onPlayerClose";
     public static final String F_CALLBACK_ON_PLAYER_STATUS_CHANGE = "uexVideo.onPlayerStatusChange";
+    public static final String F_CALLBACK_ON_COMPLETION = "uexVideo.onCompletion" ;
 
 
     private ResoureFinder finder;

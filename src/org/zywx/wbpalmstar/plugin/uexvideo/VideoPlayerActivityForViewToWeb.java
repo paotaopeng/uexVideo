@@ -167,7 +167,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 	private int y_activity = 0;
 	private int w_activity = 0;
 	private int h_activity = 0;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -546,7 +546,8 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         m_sbTimeLine.setProgress(passTime);//重新显示控制条
         switchControllersVisiblity();
         m_ivPlayPause.setBackgroundResource(finder.getDrawableId("plugin_video_play_selector"));
-	}
+        mUexBaseObj.callBackPluginJs(EUExVideo.F_CALLBACK_ON_COMPLETION, "");
+    }
 
 
 	public void setVideoDisplayMode(int mode) {
