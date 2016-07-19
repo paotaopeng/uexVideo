@@ -42,7 +42,7 @@ window.uexOnload = function() {
         progress = p;
         document.getElementById('info2').innerHTML = "压缩进度:" + progress + "\n录制的视频地址:"+localPath;
     }
-    uexVideo.onCompletion = function() {
+    uexVideo.onPlayerFinish = function() {
         alert("video completed!");
     }
 }

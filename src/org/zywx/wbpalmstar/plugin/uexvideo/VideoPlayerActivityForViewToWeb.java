@@ -546,7 +546,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         m_sbTimeLine.setProgress(passTime);//重新显示控制条
         switchControllersVisiblity();
         m_ivPlayPause.setBackgroundResource(finder.getDrawableId("plugin_video_play_selector"));
-        mUexBaseObj.callBackPluginJs(EUExVideo.F_CALLBACK_ON_COMPLETION, "");
+        mUexBaseObj.callBackPluginJs(EUExVideo.F_CALLBACK_ON_PLAYER_FINISH, "");
     }
 
 
