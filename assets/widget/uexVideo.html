@@ -42,6 +42,9 @@ window.uexOnload = function() {
         progress = p;
         document.getElementById('info2').innerHTML = "压缩进度:" + progress + "\n录制的视频地址:"+localPath;
     }
+    uexVideo.onPlayerFinish = function() {
+          alert("video completed!");
+      }
 }
     function recordVideo(){
         var params={
@@ -52,7 +55,7 @@ window.uexOnload = function() {
         }
         uexVideo.record(JSON.stringify(params));
     }
-    
+
     function openPlayer(path){
         var param = {
             src:path,
@@ -64,7 +67,7 @@ window.uexOnload = function() {
             width:320,
             height:240,
             x:10,
-            y:400, 
+            y:400,
             scrollWithWeb:true,
         }
         uexVideo.openPlayer(JSON.stringify(param));
