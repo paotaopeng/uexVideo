@@ -244,8 +244,8 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 		m_bottomLayer.setOnClickListener(this);
 		if (showCloseButton) {
 			ivClose.setVisibility(View.VISIBLE);
-			ivClose.setOnClickListener(this);
 		}
+		ivClose.setOnClickListener(this);
 	}
 
 	private void initMediaPlayer(String path) {
