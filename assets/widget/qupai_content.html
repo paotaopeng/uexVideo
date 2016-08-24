@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="css/lstyle.css">
+        <style type="text/css">
+            #time {
+                color: #8B8B83;
+            }
+            .img{
+                padding:0;margin:0;
+                height: 500px;
+            }
+
+        </style>
+    </head>
+    <body class="um-vp bc-bg ub-ver" ontouchstart>
+        <div id="list" style="padding:0;margin:0;">
+            <div class="ub uinn" id="title">
+                <img name="avatar" src="css/img/20160111134700.png" alt="" />
+                <div id="" class="ub ub-ver ub-f1 umar2">
+                    <p class="nickname">
+                        小花同学
+                    </p>
+                    <h4 class="title"> 我又有新视频分享咯~~^.^</h4> 
+                </div>
+                <div id="time">
+                    4/29  11:30
+                </div>
+            </div>
+            <div name="images" class="ub video" style="padding:0;margin:0;height: 500px">
+                <img src="css/img/20160111134700.png" class="img"/>
+                <img src="css/img/play.png"  id="1" style="width:3em;height:3em;position: relative;top: -10em;left:10em" >
+            </div>
+            <div class="ub uinn" id="title">
+                <img name="avatar" src="css/img/20160111134700.png" alt="" />
+                <div id="" class="ub ub-ver ub-f1 umar2">
+                    <p class="nickname">
+                        小花同学
+                    </p>
+                    <h4 class="title"> 我又有新视频分享咯~~^.^</h4> 
+                </div>
+                <div id="time">
+                    4/29  11:30
+                </div>
+            </div>
+            <div name="images" class="ub video" style="padding:0;margin:0;height: 500px">
+                <img src="css/img/20160111134700.png" class="img"/>
+                <img src="css/img/play.png" onclick="play(1)" style="width:3em;height:3em;position: relative;top: -10em;left:10em" >
+            </div>
+            <div class="ub uinn" id="title">
+                <img name="avatar" src="css/img/20160111134700.png" alt="" />
+                <div id="" class="ub ub-ver ub-f1 umar2">
+                    <p class="nickname">
+                        小花同学
+                    </p>
+                    <h4 class="title"> 我又有新视频分享咯~~^.^</h4> 
+                </div>
+                <div id="time">
+                    4/29  11:30
+                </div>
+            </div>
+            <div name="images" class="ub video" style="padding:0;margin:0;height: 500px">
+                <img src="css/img/20160111134700.png" class="img"/>
+                <img src="css/img/play.png" onclick="play(2)"  style="width:3em;height:3em;position: relative;top: -10em;left:10em" >
+            </div>
+        </div>
+
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.slider.js"></script>
+        <script src="js/appcan.listview.js"></script>
+    </body>
+    <script>
+    var num=0;
+    var w;
+    //var pathNum="path"+num;
+    var tHeight;
+        appcan.ready(function() {            
+            tHeight = $('#title').offset().height;
+            w=screen.availWidth; 
+            $(".img").css("width",w+"px");
+
+        })
+        appcan.button("#1", "btn-act", function() {
+            uexVideo.closePlayer();
+            var param2 = {
+                src:"res://1.mp4",
+                width:w,
+                height:500,
+                x:0,
+                y:tHeight,
+            }
+            uexVideo.openPlayerForShortVideo(JSON.stringify(param2));
+        })
+        function play(num){
+            uexVideo.closePlayer();
+
+            var pHeight=(tHeight+500)*num+tHeight;
+            var pathVideo = appcan.locStorage.val(num);
+            var param = {
+                 src : "res://1.mp4",
+                width:w,
+                height:500,
+                x:0,
+                y:pHeight,
+                
+            }
+            uexVideo.openPlayerForShortVideo(JSON.stringify(param));
+        }
+        function show() {
+            num+=1;
+            var path = appcan.locStorage.val('path');
+            var imgsrc = appcan.locStorage.val('imgsrc');
+            appcan.locStorage.setVal(num,path);
+            var pathVideo = appcan.locStorage.val(num);
+            var myDate = new Date();
+            var month = myDate.getMonth() + 1;
+            var time = month + "/" + myDate.getDate() + "  " + myDate.getHours() + ":" + myDate.getMinutes();
+
+            var addString = '<div class="ub uinn" style="border-top:1px solid #cdcdcd;">'
+                        + '<img name="avatar" src="css/img/20160111134700.png" alt="" />' 
+                        + '<div id="" class="ub ub-ver ub-f1 umar2">' 
+                        + '<p class="nickname">' + '小花同学' + '</p>' 
+                        + '<h4 class="title">我又有新视频分享咯~~^.^</h4>' 
+                        +'</div><div id="time">'+time+'</div></div>'
+                        + '<div id="" name="images" class="ub video" style="height: 500px">' 
+                        + '<img src="' + imgsrc + '"  class="img" />' 
+                        +'<img src="css/img/play.png" onclick="play('+num+')" style="width:3em;height:3em;position: relative;top: -10em;left:10em" >'
+                        + '</div>';
+            $("#list").append(addString);
+            $(".img").css("width",w+"px");
+        }
+    </script>
+</html>
