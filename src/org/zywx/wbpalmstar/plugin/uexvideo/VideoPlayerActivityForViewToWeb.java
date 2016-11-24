@@ -244,8 +244,8 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 		m_bottomLayer.setOnClickListener(this);
 		if (showCloseButton) {
 			ivClose.setVisibility(View.VISIBLE);
-			ivClose.setOnClickListener(this);
 		}
+		ivClose.setOnClickListener(this);
 	}
 
 	private void initMediaPlayer(String path) {
@@ -547,7 +547,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         switchControllersVisiblity();
         m_ivPlayPause.setBackgroundResource(finder.getDrawableId("plugin_video_play_selector"));
         mUexBaseObj.callBackPluginJs(EUExVideo.F_CALLBACK_ON_PLAYER_FINISH, "");
-    }
+	}
 
 
 	public void setVideoDisplayMode(int mode) {

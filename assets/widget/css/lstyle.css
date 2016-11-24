@@ -1,0 +1,461 @@
+.bgc{
+    background-color: #FFFFFF;
+}
+
+.bgc1{
+    background-color: #f8f7f7;
+}
+.bgc2{
+    background-color: #f5f5f5;
+}
+.bgc3{
+    background-color: #c0c0c0;
+}
+.bgc4{
+    background-color: #e5e5e5;
+}
+.bgc5{
+    background-color: #FB8717;
+}
+
+.bgc6{
+    background-color:lightgreen;
+}
+.bgc7{
+    background-color:pink;
+}
+
+.bgc8{
+    background-color:#999999;
+}
+.umar1{
+    margin-right: 1em;
+}
+
+.umar2{
+    margin-right: .5em;
+}
+.umart1{
+    margin-top: 1em;
+}
+.umar-a1{
+    margin:.75em 1em;
+}
+.umar-a2{
+    margin: 1em;
+}
+.umar-a3{
+    margin: .25em .25em 0 .25em;
+}
+.umar-a4{
+    margin: 0 .5em;
+}
+.umar-a5{
+    margin: .25em 0;
+}
+.umar-a6{
+    margin: .75em 0 .75em 1em;
+}
+.umarl1{
+    margin-left: .5em;
+}
+.umarl{
+    margin-left: 1em;
+}
+.umarlr{
+    margin: 0 1em;
+}
+.ubb1{
+    border-bottom: solid .1em #f0f0f0;
+}
+.ubt1{
+    border-top: solid .1em #c9c9c9;
+}
+
+.pad-b{
+    padding-bottom: 1em;
+}
+.pad-l{
+    padding-left: 1em;
+}
+.pad-t{
+    padding-top: 1em;
+}
+.pad-r{
+    padding-right: 1em;
+}
+.pad-t1{
+    padding-top: .5em;
+}
+.pad1{
+    padding: 0 .5em;
+}
+.pad2{
+    padding: 1em;
+}
+.pad3{
+    padding: 0 1em;
+}
+.pad4{
+    padding: .5em 1em;
+}
+.pad5{
+    padding: 0 .75em;
+}
+.pad6{
+    padding: .5em 0;
+}
+.pad7{
+    padding: .25em .5em;
+}
+.pad8{
+    padding: 1em .75em;
+}
+.pad9{
+    padding: .75em;
+}
+
+.nickname{
+    /*font-size: .875em;*/
+   font-size: 1em;
+    color:red;
+    margin: .25em .5em .25em 0;
+}
+
+.title{
+    margin: .25em .5em .25em 0;
+}
+.time{
+    margin: .25em .5em .25em 0;
+    font-size: .75em;
+}
+
+.content{
+    overflow : hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    font-size: .875em
+    margin: .25em .5em .25em 0;    
+    color: #666666;
+}
+
+.fc1{
+    color: #666666;
+}
+.fc2{
+    color: #FB8717;
+}
+.fc3{
+    color: #999999;
+}
+.fs1{
+    font-size: .75em;
+}
+.fs2{
+    font-size: 1.5em;
+}
+
+.zone-head{
+    background-color: #808080;
+    height: 9em;
+}
+
+img[name="avatar"]{
+    width: 3em;
+    height:3em;
+    margin-right: 1em; 
+    border-radius: 1.5em;
+}
+                
+/*div[name="images"] img{
+    height: 10em;
+    /*display: -webkit-box;*/
+    /*-webkit-box-flex: 1; */
+    /*width: 0;*/
+    margin: .5em .5em .5em 0;
+}*/
+
+
+.thumbs{
+    height: 6em;
+    display: -webkit-box;
+    -webkit-box-flex: 1; 
+    width: 0;
+    margin: .5em .5em .5em 0;
+}
+
+
+.zone-avatar{
+     height: 7em;
+     width: 7em; 
+     top:4em;
+     left:50%;
+     margin-left:-3.5em;
+     position: absolute;
+     border-radius:3.5em;
+     -webkit-border-radius: 3.5em;
+ }
+ 
+.square-avatar{
+    height: 3em;
+    width:3em;
+    margin-top: .35em;
+    border-radius:1.5em;
+}
+
+.avatar1{
+    height: 6em;
+    width: 6em;
+    border-radius: 3em;
+}
+.msg{
+    height: 3em;
+    width: 3em;
+    margin-top: .35em;
+}
+.post{
+    /*min-height: 12em;*/
+}
+
+.ub-none{
+    border:none;
+}
+.bor{
+    border: solid 1px #666666;
+}
+
+.ulev123{
+    font-size: 1.23em;
+}
+.fontc{
+    color: #4876FF;
+}
+.uc-a4{
+    -webkit-border-radius: .5em;
+    border-radius: .5em;
+}
+
+.bgi{
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+
+.wid100{
+    width: 100%;
+}
+.wid0{
+    width: 0;
+}
+.wid{
+    width: 2.5em;
+}
+.wid3{
+    width: 3em;
+}
+
+.btn1{
+    background-color: #fb8717;
+    padding: .5em 1em;
+    border: none;
+    margin: .5em;
+}
+/* 领养二手*/
+.btn2{
+    width: 100%;
+}
+
+.header{
+    height: 2.75em;
+}
+
+.he2{
+    height: 1.5em;
+}
+
+.he1{
+    height: 1em;
+}
+
+.he3{
+    height: 3em;
+}
+
+
+.tab{
+    color: #FFFFFF;
+    border-bottom: solid .25em #fb8717;
+}
+.ubb2{
+    border-bottom: solid .25em #;
+}
+
+
+.scroll-x{
+    overflow-x: auto;
+    width: 100%;
+}
+
+ .three{
+    /*display: inline;*/
+    display: inline-block;
+    width:31%; /*一行3个 */  
+    margin:.2em 0 0 .1em;
+    height: 6em;*/
+}
+
+
+.dot{
+    background-color: red;
+    float: right;
+    border-radius:.8em;
+    padding: .2em;
+    height: 1.2em;
+    width: 1.2em;
+}
+
+.outl1{
+    outline: none;
+}
+
+.size1{
+    height: 4em;
+    width: 4em;
+}
+#search::-webkit-input-placeholder{text-align: center;} 
+
+ .input-s{
+    border: solid 1px #999999;
+    outline: none;
+ }
+.mb-publish{
+    height: 2em;
+    left: 2em;
+    position: relative;
+}
+
+ .me{
+    width: 5em;
+    height: 2em;
+    float: right;
+    margin: .25em .75em;
+}
+
+.publish{
+    float: right;
+    margin: .75em;
+    height: 2em;
+    width: 5em;
+    font-weight: 700;
+}
+ .textarea1{
+    width: 100%;
+    height: 12em;
+    resize: none;
+}
+.navbar1{
+    overflow-x: auto;
+    display:box;
+    display: -webkit-box;
+}
+.navbar1 > li{
+    height: 1.75em;
+    display: box;
+    display: -webkit-box;
+    -webkit-box-align:center;
+    box-align:center;
+    -webkit-box-pack:center;
+    box-pack:center;
+    width: 3em;
+    padding:.5em;
+    font-size: 1em;
+    background-color: #F8F7F7;
+}
+.navbar1 > li:first-child,.navbar3 > li:first-child{
+    color: #FB8717
+}
+
+.navbar2{
+    display:box;
+    display: -webkit-box;
+}
+
+.navbar2 > li{
+    height: 1em;
+    background-color: green;
+    text-align: center;
+    padding: .5em;
+}
+
+.navbar3{
+    display: box;
+    display: -webkit-box;
+    color: #999999;
+    border-bottom: solid .1em #999999;
+    width: 100%;
+}
+
+.navbar3 > li{
+    height: 3.125em;
+    display: box;
+    display: -webkit-box;
+    -webkit-box-flex: 1; 
+    box-flex: 1;
+    -webkit-box-align:center;
+    box-align:center;
+    -webkit-box-pack:center;
+    box-pack:center;
+    width: 0;
+    font-size: .8em;
+    background-color: #F0F0F0;
+}
+table.navbar4{
+    width: 100%;
+    /*border-collapse:collapse;*/
+    border-radius: 4px;
+    border: solid 2px pink;
+}
+table.navbar4 td{
+    text-align: center;
+    border-left: solid 1px #4E4E4E;
+    margin: 0;
+}
+
+table.navbar4 td:first-child{
+    background-color: red;
+    border-left:none;
+}
+
+
+/*排行榜*/
+.rank-img{
+    margin-left: 1.125em;
+    height: 6.25em;
+    width: 6.25em;
+    background-image: url('../photo/rank_head.png');
+    background-size: cover;
+}
+.rank-num{
+    margin-left: .625em;
+    color: #333333;
+}
+ul.chart > li{
+    height: 7.6em;border-bottom: 1px solid gray;
+}
+
+ul.rank-num li{
+    margin-top: .375em;
+}
+.rank-man{
+    margin-left: 0.375em;font-size: 0.875em;
+}
+.rank-icon{
+    height: 1em;
+    width: 1em;
+    background-size: cover;
+}
+.rank-btn{
+    border: 1px solid #e5e5e5;width: 4.5em;height: 2em;color:#fb8717;margin-right: 1.125em;
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="qupai/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="page_0" class="up ub ub-ver" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left"></div>
+                <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">趣拍视频</h1>
+                <div class="nav-btn" id="nav-right">
+                    <!--按钮开始-->
+
+                    <!--按钮结束-->
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l t-bla c-wh">
+
+            </div>
+            <!--content结束-->
+            <div class="uinn-f uop" id="foot">
+                <div id="footer" class="uf t-bla ub tab t-wh ubt bc-border c-wh">
+
+                </div>
+                <div class="ub ub-ac ub-pc" id="camera">
+                    <div class="ub ub-ac ub-pc ub-img camera-bg uwh-pic umar-t-pic">
+                        <div class="camera ub-img uwh-tBtn"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/appcan.tab.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            var footHeight = $('#foot').offset().height;
+            var pageHeight=$('#page_0').offset().height;
+            var Height=pageHeight-titHeight-footHeight;
+            uexWindow.openPopover("qupai",0,"qupai_content.html","",0,titHeight,'',Height,'',0,0);
+
+        });
+        var tabview = appcan.tab({
+            selector : "#footer",
+            hasIcon : true,
+            hasAnim : false,
+            hasLabel : true,
+            hasBadge : false,
+            index : 0,
+            data : [{
+                label : "首页",
+                icon : "fa-home"
+            }, {
+                label : "record",
+                icon : ""
+            }, {
+                label : "设置",
+                icon : "fa-laptop"
+            }]
+        });
+        tabview.on("click", function(obj, index) {
+            //appcan.window.selectMultiPopover("content", index);
+            //alert(index);
+            if (index == 0) {
+            // var titHeight = $('#header').offset().height;
+            // var footHeight = $('#foot').offset().height;
+            // var pageHeight=$('#page_0').offset().height;
+            // var Height=pageHeight-titHeight-footHeight;
+                uexWindow.bringPopoverToFront("qupai");
+                //uexWindow.openPopover("qupai",0,"qupai_content.html","",0,titHeight,'',Height,'',0,0);
+            } else if (index == 2) {
+               var titHeight = $('#header').offset().height;
+            var footHeight = $('#foot').offset().height;
+            var pageHeight=$('#page_0').offset().height;
+            var Height=pageHeight-titHeight-footHeight;
+            uexWindow.openPopover("shezhi",0,"index_content.html","",0,titHeight,'',Height,'',0,0);
+            uexWindow.bringPopoverToFront("shezhi");
+            }
+        })
+        appcan.button("#camera", "btn-act", function() {           
+             var minDuration = appcan.locStorage.val('minDuration');
+                var maxDuration = appcan.locStorage.val('maxDuration');
+                //alert(minDuration);
+                if(minDuration==null){
+                    var minDuration =1;
+                }
+                //alert(maxDuration);
+                if(maxDuration==null){
+                    var maxDuration =20;
+                }
+                //alert(minDuration);
+                //alert(maxDuration);
+                var params = {
+                    minDuration : minDuration,
+                    maxDuration : maxDuration
+                }
+        })
+    </script>
+</html>
