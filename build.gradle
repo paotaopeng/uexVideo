@@ -65,7 +65,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         applicationId 'org.zywx.wbpalmstar.widgetone.uexvideo'
-
+        multiDexEnabled true
     }
     productFlavors {
     }
