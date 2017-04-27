@@ -1,16 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin uexName="uexVideo" version="4.0.10" build = "10">
-        <info>10:UI改版</info>
-        <build>9:添加播放完毕后的监听</build>
-        <build>8:4.0</build>
-        <build>7:修正拼写错误</build>
-        <build>6:优化视屏录制接口和视屏播放接口</build>
-        <build>5:新增接口,实现自定义视频界面的大小和位置,支持扩展全屏,部分代码优化</build>
-        <build>4:删除无用资源</build>
-        <build>3:修复不支持wgt协议的问题</build>
-        <build>2:修复录制视频时模糊问题</build>
-        <build>1:修复res路径解析出错问题</build>
-        <build>0:视频功能插件</build>
+    <plugin uexName="uexVideo" version="4.0.2" build = "2">
+        <info>2:UI改版</info>
+        <build>1:添加播放完毕后的监听</build>
+        <build>0:4.0</build>
 	</plugin>
 </uexplugins>
