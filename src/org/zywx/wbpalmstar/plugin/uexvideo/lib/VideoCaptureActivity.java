@@ -29,10 +29,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import org.zywx.wbpalmstar.base.BConstant;
 import org.zywx.wbpalmstar.base.ResoureFinder;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.camera.CameraWrapper;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.camera.NativeCamera;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.configuration.CaptureConfiguration;
+import org.zywx.wbpalmstar.plugin.uexvideo.lib.preview.SensorController;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.recorder.AlreadyUsedException;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.recorder.VideoRecorder;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.recorder.VideoRecorderInterface;
@@ -56,7 +58,8 @@ public class VideoCaptureActivity extends Activity implements RecordingButtonInt
 
     private VideoCaptureView mVideoCaptureView;
     private VideoRecorder    mVideoRecorder;
-    private ResoureFinder finder;
+    private ResoureFinder    finder;
+    private boolean mFlashOpen = false;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -129,8 +132,31 @@ public class VideoCaptureActivity extends Activity implements RecordingButtonInt
     }
 
     @Override
+    public void onChangeCameraButtonClicked() {
+        boolean isBack=mVideoRecorder.getCameraWrapper().getNativeCamera().isBackCamera();
+        mVideoCaptureView.setFlashButtonBg(!isBack);
+        mVideoCaptureView.setFlashBtnVisible(!isBack);
+        mVideoRecorder.changeCamera();
+
+    }
+
+    @Override
+    public void onFlashButtonClicked() {
+         if (mFlashOpen) {
+            mVideoRecorder.closeFlash();
+            mFlashOpen=false;
+        }else {
+            mVideoRecorder.openFlash();
+            mFlashOpen=true;
+        }
+        mVideoCaptureView.setFlashButtonBg(mFlashOpen);
+    }
+
+    @Override
     public void onRecordingStarted() {
         mVideoCaptureView.updateUIRecordingOngoing();
+        mVideoCaptureView.startTimer();
+        mVideoCaptureView.recordMode(true);
     }
 
     @Override
@@ -141,6 +167,7 @@ public class VideoCaptureActivity extends Activity implements RecordingButtonInt
 
         mVideoCaptureView.updateUIRecordingFinished(getVideoThumbnail());
         releaseAllResources();
+        mVideoCaptureView.stopTimer();
     }
 
     @Override
@@ -225,5 +252,18 @@ public class VideoCaptureActivity extends Activity implements RecordingButtonInt
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Log.i("TAG", "is protrait:" + ( newConfig.orientation == Configuration.ORIENTATION_PORTRAIT));
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        SensorController.getInstance(BConstant.app).start();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SensorController.getInstance(BConstant.app).stop();
     }
 }

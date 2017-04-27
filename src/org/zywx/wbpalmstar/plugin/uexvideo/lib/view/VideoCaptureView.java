@@ -18,29 +18,36 @@ package org.zywx.wbpalmstar.plugin.uexvideo.lib.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
+import android.widget.TextView;
 import org.zywx.wbpalmstar.base.ResoureFinder;
+import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 
 
 public class VideoCaptureView extends FrameLayout implements OnClickListener {
 
-	private ImageView					mDeclineBtnIv;
-	private ImageView					mAcceptBtnIv;
-	private ImageView					mRecordBtnIv;
-	private SurfaceView					mSurfaceView;
-	private ImageView					mThumbnailIv;
+	private ImageView   mDeclineBtnIv;
+	private ImageView   mThumbnailIv;
+	private ImageView   mFlashIv;
+	private ImageView   mAcceptBtnIv;
+	private ImageView   mRecordBtnIv;
+	private SurfaceView mSurfaceView;
+	private ImageView   mSwitchCameraIv;
+	private Chronometer mTimerTv;
 
-	private RecordingButtonInterface	mRecordingInterface;
-	private ResoureFinder finder;
-
+	private RecordingButtonInterface mRecordingInterface;
+	private ResoureFinder            finder;
 
 	public VideoCaptureView(Context context) {
 		super(context);
@@ -64,11 +71,15 @@ public class VideoCaptureView extends FrameLayout implements OnClickListener {
 		mRecordBtnIv = (ImageView) videoCapture.findViewById(finder.getId("videocapture_recordbtn_iv"));
 		mAcceptBtnIv = (ImageView) videoCapture.findViewById(finder.getId("videocapture_acceptbtn_iv"));
 		mDeclineBtnIv = (ImageView) videoCapture.findViewById(finder.getId("videocapture_declinebtn_iv"));
-
+		mSwitchCameraIv = (ImageView) videoCapture.findViewById(EUExUtil.getResIdID("plugin_video_switch_btn"));
+		mFlashIv= (ImageView) videoCapture.findViewById(EUExUtil.getResIdID("plugin_video_flash_btn"));
+		mTimerTv= (Chronometer) videoCapture.findViewById(EUExUtil.getResIdID("plugin_video_timer_txt"));
+//		mTimerTv.setFormat("H:MM:SS");
 		mRecordBtnIv.setOnClickListener(this);
 		mAcceptBtnIv.setOnClickListener(this);
 		mDeclineBtnIv.setOnClickListener(this);
-
+        mSwitchCameraIv.setOnClickListener(this);
+        mFlashIv.setOnClickListener(this);
 		mThumbnailIv = (ImageView) videoCapture.findViewById(finder.getId("videocapture_preview_iv"));
 		mSurfaceView = (SurfaceView) videoCapture.findViewById(finder.getId("videocapture_preview_sv"));
 	}
@@ -88,7 +99,18 @@ public class VideoCaptureView extends FrameLayout implements OnClickListener {
 		mDeclineBtnIv.setVisibility(View.GONE);
 		mThumbnailIv.setVisibility(View.GONE);
 		mSurfaceView.setVisibility(View.VISIBLE);
-	}
+        mRecordBtnIv.setBackgroundResource(EUExUtil.getResDrawableID("plugin_video_states_btn_capture"));
+
+    }
+
+	public void startTimer(){
+	    mTimerTv.setBase(SystemClock.elapsedRealtime());
+	    mTimerTv.start();
+    }
+
+    public void stopTimer(){
+	    mTimerTv.stop();
+    }
 
 	public void updateUIRecordingOngoing() {
 		mRecordBtnIv.setSelected(true);
@@ -97,6 +119,7 @@ public class VideoCaptureView extends FrameLayout implements OnClickListener {
 		mDeclineBtnIv.setVisibility(View.GONE);
 		mThumbnailIv.setVisibility(View.GONE);
 		mSurfaceView.setVisibility(View.VISIBLE);
+		mRecordBtnIv.setBackgroundResource(EUExUtil.getResDrawableID("plugin_video_states_btn_recording"));
 	}
 
 	public void updateUIRecordingFinished(Bitmap videoThumbnail) {
@@ -112,6 +135,28 @@ public class VideoCaptureView extends FrameLayout implements OnClickListener {
 		}
 	}
 
+	public void setFlashButtonBg(boolean open){
+        if (open){
+            mFlashIv.setBackgroundResource(EUExUtil.getResDrawableID("plugin_video_flash_close"));
+        }else {
+            mFlashIv.setBackgroundResource(EUExUtil.getResDrawableID("plugin_video_flash_open"));
+        }
+    }
+
+    public void setFlashBtnVisible(boolean visible){
+	    mFlashIv.setVisibility(visible?VISIBLE:INVISIBLE);
+    }
+
+    public void recordMode(boolean recording){
+        if (recording){
+            mFlashIv.setVisibility(GONE);
+            mSwitchCameraIv.setVisibility(GONE);
+        }else{
+            mFlashIv.setVisibility(VISIBLE);
+            mSwitchCameraIv.setVisibility(VISIBLE);
+        }
+    }
+
 	@Override
 	public void onClick(View v) {
 		if (mRecordingInterface == null) return;
@@ -122,7 +167,11 @@ public class VideoCaptureView extends FrameLayout implements OnClickListener {
 			mRecordingInterface.onAcceptButtonClicked();
 		} else if (v.getId() == mDeclineBtnIv.getId()) {
 			mRecordingInterface.onDeclineButtonClicked();
-		}
+		} else if (v.getId()==mFlashIv.getId()){
+		    mRecordingInterface.onFlashButtonClicked();
+        }else if (v.getId()==mSwitchCameraIv.getId()){
+		    mRecordingInterface.onChangeCameraButtonClicked();
+        }
 
 	}
 

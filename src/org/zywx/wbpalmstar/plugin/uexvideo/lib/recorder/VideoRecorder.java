@@ -31,6 +31,7 @@ public class VideoRecorder implements OnInfoListener, CapturePreviewInterface {
     private MediaRecorder mRecorder;
     private boolean mRecording = false;
     private final VideoRecorderInterface mRecorderInterface;
+    private SurfaceHolder mPreviewHolder;
 
     public VideoRecorder(VideoRecorderInterface recorderInterface, CaptureConfiguration captureConfiguration, VideoFile videoFile,
                          CameraWrapper cameraWrapper, SurfaceHolder previewHolder) {
@@ -38,9 +39,14 @@ public class VideoRecorder implements OnInfoListener, CapturePreviewInterface {
         mRecorderInterface = recorderInterface;
         mVideoFile = videoFile;
         mCameraWrapper = cameraWrapper;
+        mPreviewHolder=previewHolder;
         mPreviewSurface = previewHolder.getSurface();
 
         initializeCameraAndPreview(previewHolder);
+    }
+
+    public CameraWrapper getCameraWrapper(){
+        return mCameraWrapper;
     }
 
     protected void initializeCameraAndPreview(SurfaceHolder previewHolder) {
@@ -92,6 +98,14 @@ public class VideoRecorder implements OnInfoListener, CapturePreviewInterface {
 
         mRecording = false;
         mRecorderInterface.onRecordingStopped(message);
+    }
+
+    public void changeCamera(){
+        try {
+            mCameraWrapper.changeCamera(mPreviewHolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean initRecorder() {
@@ -232,4 +246,11 @@ public class VideoRecorder implements OnInfoListener, CapturePreviewInterface {
         }
     }
 
+    public void closeFlash() {
+        mCameraWrapper.closeFlash();
+    }
+
+    public void openFlash(){
+        mCameraWrapper.openFlash();
+    }
 }

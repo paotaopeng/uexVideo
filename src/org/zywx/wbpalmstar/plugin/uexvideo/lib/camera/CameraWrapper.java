@@ -11,8 +11,12 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.view.SurfaceHolder;
 
+import org.zywx.wbpalmstar.base.BConstant;
+import org.zywx.wbpalmstar.base.BDebug;
+import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.CLog;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.camera.OpenCameraException.OpenType;
+import org.zywx.wbpalmstar.plugin.uexvideo.lib.preview.SensorController;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,12 +25,50 @@ import java.util.List;
 public class CameraWrapper {
 
     private final int mDisplayRotation;
+
+
     private NativeCamera mNativeCamera = null;
     private Parameters   mParameters   = null;
 
     public CameraWrapper(NativeCamera nativeCamera, int displayRotation) {
         mNativeCamera = nativeCamera;
         mDisplayRotation = displayRotation;
+        SensorController.getInstance(BConstant.app).setCameraFocusListener(new SensorController.CameraFocusListener() {
+            @Override
+            public void onFocus() {
+                try{
+                    mNativeCamera.getNativeCamera().autoFocus(new Camera.AutoFocusCallback() {
+                        @Override
+                        public void onAutoFocus(boolean success, Camera camera) {
+
+                        }
+                    });
+                }catch (Exception e){
+                    if (BDebug.DEBUG) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+    }
+
+    public void openFlash(){
+        try{
+            Camera.Parameters mParameters;
+            mParameters = getCamera().getParameters();
+            mParameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            getCamera().setParameters(mParameters);
+        } catch(Exception ex){}
+    }
+
+    public void closeFlash(){
+        try{
+            Camera.Parameters mParameters;
+            mParameters = getCamera().getParameters();
+            mParameters.setFlashMode(Parameters.FLASH_MODE_OFF);
+            getCamera().setParameters(mParameters);
+        } catch(Exception ex){}
     }
 
     public Camera getCamera() {
@@ -42,6 +84,7 @@ public class CameraWrapper {
         }
 
         if (mNativeCamera.getNativeCamera() == null) throw new OpenCameraException(OpenType.NOCAMERA);
+        SensorController.getInstance(BConstant.app).start();
     }
 
     public void prepareCameraForRecording() throws PrepareCameraException {
@@ -61,6 +104,12 @@ public class CameraWrapper {
     public void startPreview(final SurfaceHolder holder) throws IOException {
         mNativeCamera.setNativePreviewDisplay(holder);
         mNativeCamera.startNativePreview();
+
+      }
+
+    public void changeCamera(final SurfaceHolder holder) throws IOException {
+        mNativeCamera.changeCamera(holder);
+        mNativeCamera.setDisplayOrientation(getRotationCorrection());
     }
 
     public void stopPreview() throws Exception {
@@ -211,5 +260,10 @@ public class CameraWrapper {
             }
         }
         return new CameraSize(optimalSize.width, optimalSize.height);
+    }
+
+
+    public NativeCamera getNativeCamera() {
+        return mNativeCamera;
     }
 }

@@ -16,59 +16,80 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/videocapture_container_rl"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:keepScreenOn="true" >
+                android:id="@+id/videocapture_container_rl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                android:keepScreenOn="true">
 
     <SurfaceView
-        android:id="@+id/videocapture_preview_sv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+            android:id="@+id/videocapture_preview_sv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     <ImageView
-        android:id="@+id/videocapture_preview_iv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+            android:id="@+id/videocapture_preview_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:padding="10dp"
+                  android:gravity="center_vertical"
+                  android:background="#78000000" android:layout_alignParentTop="true">
+        <ImageView android:layout_width="30dp" android:layout_height="30dp"
+        android:background="@drawable/plugin_video_flash_close"
+                   android:id="@+id/plugin_video_flash_btn"
+        />
+        <Chronometer android:layout_width="0dp" android:layout_height="wrap_content"
+        android:layout_weight="1"
+                  android:gravity="center"
+                  android:layout_gravity="center"
+                  android:id="@+id/plugin_video_timer_txt"
+        android:textColor="@color/white"
+                  android:textSize="18sp"
+        />
+        <ImageView android:layout_width="30dp" android:layout_height="30dp"
+                   android:background="@drawable/plugin_video_switch_camera"
+                   android:id="@+id/plugin_video_switch_btn"
+        />
+    </LinearLayout>
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:background="#78000000"
+                    android:layout_alignParentBottom="true"
+    >
+        <ImageView
+                android:id="@+id/videocapture_recordbtn_iv"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
+                android:layout_margin="20dp"
+                android:background="@drawable/plugin_video_states_btn_capture"
+                android:clickable="true"/>
+        <ImageView
+                android:id="@+id/videocapture_acceptbtn_iv"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_toRightOf="@id/videocapture_recordbtn_iv"
+                android:layout_centerInParent="true"
+                android:background="@drawable/plugin_video_states_btn_acceptdecline"
+                android:clickable="true"
+                android:padding="8dp"
+                android:src="@drawable/plugin_video_btn_accept"
+                android:visibility="gone"/>
 
-    <ImageView
-        android:id="@+id/videocapture_recordbtn_iv"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="-20dp"
-        android:background="@drawable/plugin_video_states_btn_capture"
-        android:clickable="true" />
+        <ImageView
+                android:id="@+id/videocapture_declinebtn_iv"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_toLeftOf="@id/videocapture_recordbtn_iv"
+                android:background="@drawable/plugin_video_states_btn_acceptdecline"
+                android:clickable="true"
+                android:padding="8dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/plugin_video_btn_decline"
+                android:visibility="gone"/>
 
-    <ImageView
-        android:id="@+id/videocapture_acceptbtn_iv"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_toRightOf="@id/videocapture_recordbtn_iv"
-        android:layout_alignParentBottom="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"
-        android:background="@drawable/plugin_video_states_btn_acceptdecline"
-        android:clickable="true"
-        android:padding="8dp"
-        android:src="@drawable/plugin_video_btn_accept"
-        android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/videocapture_declinebtn_iv"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/videocapture_recordbtn_iv"
-        android:layout_margin="10dp"
-        android:background="@drawable/plugin_video_states_btn_acceptdecline"
-        android:clickable="true"
-        android:padding="8dp"
-        android:src="@drawable/plugin_video_btn_decline"
-        android:visibility="gone" />
+    </RelativeLayout>
 
 
 </RelativeLayout>

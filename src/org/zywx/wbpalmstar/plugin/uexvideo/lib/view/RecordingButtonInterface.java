@@ -24,4 +24,8 @@ public interface RecordingButtonInterface {
 
 	public abstract void onDeclineButtonClicked();
 
+	void onChangeCameraButtonClicked();
+
+	void onFlashButtonClicked();
+
 }

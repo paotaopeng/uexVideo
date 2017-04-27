@@ -31,6 +31,7 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaPlayer.OnVideoSizeChangedListener;
+import android.media.TimedText;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -258,7 +259,12 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 		mediaPlayer.setOnPreparedListener(this);
 		mediaPlayer.setOnVideoSizeChangedListener(this);
 		mediaPlayer.setOnBufferingUpdateListener(this);
+		mediaPlayer.setOnTimedTextListener(new MediaPlayer.OnTimedTextListener() {
+			@Override
+			public void onTimedText(MediaPlayer mediaPlayer, TimedText timedText) {
 
+			}
+		});
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		try {
 			if (path.startsWith(BUtility.F_HTTP_PATH) || path.startsWith(BUtility.F_FILE_SCHEMA)

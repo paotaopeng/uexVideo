@@ -12,6 +12,10 @@ public class NativeCamera {
 
     private Camera     camera = null;
     private Parameters params = null;
+    private static final int FRONT = 1;//前置摄像头标记
+    private static final int BACK = 2;//后置摄像头标记
+    private int currentCameraType = -1;//当前打开的摄像头标记
+
 
     public Camera getNativeCamera() {
         return camera;
@@ -19,6 +23,49 @@ public class NativeCamera {
 
     public void openNativeCamera() throws RuntimeException {
         camera = Camera.open(CameraInfo.CAMERA_FACING_BACK);
+        currentCameraType=BACK;
+    }
+
+    public boolean isBackCamera(){
+        return currentCameraType==BACK;
+    }
+
+    private Camera openCamera(int type){
+        int frontIndex =-1;
+        int backIndex = -1;
+        int cameraCount = Camera.getNumberOfCameras();
+        CameraInfo info = new CameraInfo();
+        for(int cameraIndex = 0; cameraIndex<cameraCount; cameraIndex++){
+            Camera.getCameraInfo(cameraIndex, info);
+            if(info.facing == CameraInfo.CAMERA_FACING_FRONT){
+                frontIndex = cameraIndex;
+            }else if(info.facing == CameraInfo.CAMERA_FACING_BACK){
+                backIndex = cameraIndex;
+            }
+        }
+
+        currentCameraType = type;
+        if(type == FRONT && frontIndex != -1){
+            return Camera.open(frontIndex);
+        }else if(type == BACK && backIndex != -1){
+            return Camera.open(backIndex);
+        }
+        return null;
+    }
+
+    public Camera changeCamera(SurfaceHolder holder) throws IOException {
+        if (camera!=null){
+            camera.stopPreview();
+            camera.release();
+        }
+        if (currentCameraType==FRONT){
+            camera = openCamera(BACK);
+        }else{
+            camera = openCamera(FRONT);
+        }
+        camera.setPreviewDisplay(holder);
+        camera.startPreview();
+        return camera;
     }
 
     public void unlockNativeCamera() {
