@@ -67,6 +67,7 @@ import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.ResoureFinder;
 import org.zywx.wbpalmstar.engine.AbsoluteLayout;
+import org.zywx.wbpalmstar.plugin.uexvideo.vo.OpenVO;
 
 /**
  * TODO
@@ -111,6 +112,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 	private int videoWidth;
 	private int videoHeight;
     private int startTime;
+    private int endTime;//试看的结束时间
 	private boolean autoStart; //是否自动播放
     private boolean forceFullScreen; //是否强制全屏显示
 	private boolean showCloseButton; //是否显示 关闭 按钮
@@ -130,6 +132,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
     private static final int PLAYER_STATUS_BUFFERING = 1;
     private static final int PLAYER_STATUS_PLAYING = 2;
     private static final int PALYER_STATUS_ERROR = 3;
+
 
 	private GestureDetector gestureDetector = new GestureDetector(new SimpleOnGestureListener() {
 
@@ -177,28 +180,29 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
 				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		final Intent intent = getIntent();
-		if (intent == null ||  ((VideoPlayerConfig)intent.getSerializableExtra("playerConfig")) == null) {// 路径不存在
+		if (intent == null ||  ((OpenVO)intent.getSerializableExtra("playerConfig")) == null) {// 路径不存在
             alertMessage("invalid params", true);
 			return;
 		}
-        VideoPlayerConfig config = (VideoPlayerConfig)intent.getSerializableExtra("playerConfig");
-        videoPath = config.getSrc();
+        OpenVO config = (OpenVO)intent.getSerializableExtra("playerConfig");
+        videoPath = config.src;
         if (TextUtils.isEmpty(videoPath)) {
             Log.i(TAG, "[invalid params]: videoPath can not be null");
             alertMessage("invalid params", true);
         }
 
-        x_activity = config.getX();
-		y_activity = config.getY();
-        w_activity = config.getWidth();
-        h_activity = config.getHeight();
+        x_activity = config.x;
+		y_activity = config.y;
+        w_activity = config.width;
+        h_activity = config.height;
 		mUexBaseObj = intent.getParcelableExtra("EUExVideo");
-        startTime = config.getStartTime();
-        autoStart = config.getAutoStart();
-        showScaleButton = config.getShowScaleButton();
-        forceFullScreen = config.getForceFullScreen();
-		showCloseButton = config.getShowCloseButton();
-        scrollWithWeb = config.getScrollWithWeb();
+        startTime = config.startTime;
+        endTime=config.endTime*1000;
+        autoStart = config.autoStart;
+        showScaleButton = config.showScaleButton;
+        forceFullScreen = config.forceFullScreen;
+		showCloseButton = config.showCloseButton;
+        scrollWithWeb = config.scrollWithWeb;
 
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -209,7 +213,20 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 		m_display.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 		m_display.getHolder().setKeepScreenOn(true);
 		m_display.getHolder().addCallback(callback);
+
+		handler.post(checkPlayTimeRunnable);
 	}
+
+	Runnable checkPlayTimeRunnable=new Runnable() {
+		@Override
+		public void run() {
+			if (endTime!=0&&mediaPlayer!=null&&mediaPlayer.getCurrentPosition()>endTime){
+				onPlayEndTime();
+			}
+			handler.postDelayed(this, 500);
+
+		}
+	};
 
 	private void initViews() {
 		initAnimation();
@@ -323,6 +340,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 		if (autoStart) {
 			try {
 				if (lastPlayPostion != 0) {
+				    BDebug.d("lastPlayPostion",lastPlayPostion);
 					mediaPlayer.seekTo(lastPlayPostion);
 					lastPlayPostion = 0;
 				} else {
@@ -405,6 +423,9 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 	@Override
 	protected void onDestroy() {
         super.onDestroy();
+		if (handler!=null){
+			handler.removeCallbacks(checkPlayTimeRunnable);
+		}
         cancelProgressDialog();
 		if (alertDialog != null && alertDialog.isShowing()) {
 			alertDialog.dismiss();
@@ -477,6 +498,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 				case STATE_PAUSE:
                     if(startTime != 0) {
                         mediaPlayer.seekTo(startTime * 1000);
+                        BDebug.d("starttime",startTime*1000);
                         startTime = 0;
                     }
 					mediaPlayer.start();
@@ -528,10 +550,28 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) {
 		if (curerntState == STATE_PLAYING || curerntState == STATE_PAUSE) {
-			mediaPlayer.seekTo(seekBar.getProgress());
-            isUserSeekingBar = false;
+			if (endTime!=0&&endTime<passTime){
+				onPlayEndTime();
+			}else {
+				mediaPlayer.seekTo(seekBar.getProgress());
+			}
+			isUserSeekingBar = false;
 		}
 		notifyHideControllers();
+	}
+
+	private void onPlayEndTime(){
+	    BDebug.d("onPlayEndTime","试看结束");
+		curerntState = STATE_PAUSE;
+        mediaPlayer.pause();
+        mediaPlayer.seekTo(0);//重置
+        startTime = 0;
+		passTime = 0;
+		m_sbTimeLine.setProgress(passTime);//重新显示控制条
+		switchControllersVisiblity();
+		m_ivPlayPause.setBackgroundResource(finder.getDrawableId("plugin_video_play_selector"));
+		mUexBaseObj.callBackPluginJs(EUExVideo.F_CALLBACK_ON_PLAYER_ENDTIME, "");
+
 	}
 
 	@Override

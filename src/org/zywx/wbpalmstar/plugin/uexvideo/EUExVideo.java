@@ -38,12 +38,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.ResoureFinder;
+import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.VideoCaptureActivity;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.configuration.CaptureConfiguration;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.configuration.PredefinedCaptureConfigurations;
+import org.zywx.wbpalmstar.plugin.uexvideo.vo.OpenVO;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -57,6 +59,7 @@ public class EUExVideo extends EUExBase implements Parcelable{
     public static final String F_CALLBACK_ON_PLAYER_CLOSE = "uexVideo.onPlayerClose";
     public static final String F_CALLBACK_ON_PLAYER_STATUS_CHANGE = "uexVideo.onPlayerStatusChange";
     public static final String F_CALLBACK_ON_PLAYER_FINISH = "uexVideo.onPlayerFinish" ;
+    public static final String F_CALLBACK_ON_PLAYER_ENDTIME = "uexVideo.onPlayerEndTime" ;
 
     private ResoureFinder finder;
 
@@ -123,90 +126,72 @@ public class EUExVideo extends EUExBase implements Parcelable{
         int screenWidth = wm.getDefaultDisplay().getWidth();
         int screenHeight = wm.getDefaultDisplay().getHeight();
         Log.i(TAG, "screenWidth:" + screenWidth + "     screenHeight:" + screenHeight);
-        String json = params[0];
-        JSONObject jsonObject;
-        try {
-            jsonObject = new JSONObject(json);
-            String src = jsonObject.getString("src");
-            if (TextUtils.isEmpty(src)) {
-                errorCallback(0, EUExCallback.F_ERROR_CODE_VIDEO_OPEN_ARGUMENTS_ERROR, finder.getString("path_error"));
-                Log.i(TAG, "src is empty");
-                return;
-            }
-            int startTime = jsonObject.optInt("startTime", 0);
-            boolean autoStart = jsonObject.optBoolean("autoStart", false);
-            boolean forceFullScreen = jsonObject.optBoolean("forceFullScreen", false);
-            boolean showCloseButton = jsonObject.optBoolean("showCloseButton", false);
-            boolean showScaleButton = jsonObject.optBoolean("showScaleButton", false);
+        final OpenVO openVO = DataHelper.gson.fromJson(params[0], OpenVO.class);
 
-            final int width = jsonObject.optInt("width", screenWidth);
-            final int height = jsonObject.optInt("height", screenHeight);
-            final int x = jsonObject.optInt("x", 0);
-            final int y = jsonObject.optInt("y", 0);
-            scrollWithWeb = jsonObject.optBoolean("scrollWithWeb", true);
-
-            //如果设置了强制全屏，则一定要显示"关闭"按钮，不显示scaleButton, 不允许跟随网页滑动。
-            if (forceFullScreen) {
-                showCloseButton = true;
-                showScaleButton = false;
-                scrollWithWeb = false;
-            }
-            final VideoPlayerConfig config = new VideoPlayerConfig();
-            config.setX(x);
-            config.setY(y);
-            config.setWidth(width);
-            config.setHeight(height);
-            config.setSrc(src);
-            config.setStartTime(startTime);
-            config.setAutoStart(autoStart);
-            config.setForceFullScreen(forceFullScreen);
-            config.setShowCloseButton(showCloseButton);
-            config.setShowScaleButton(showScaleButton);
-            config.setScrollWithWeb(scrollWithWeb);
-
-
-            ((Activity) mContext).runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (mMapDecorView != null) {
-                        Log.i("uexVideo", "already open");
-                        return;
-                    }
-                    Intent intent = new Intent();
-                    intent.putExtra("playerConfig", config);
-                    intent.putExtra("EUExVideo", EUExVideo.this);
-                    intent.setClass(mContext, VideoPlayerActivityForViewToWeb.class);
-                    //mContext.startActivity(intent);
-                    if (mgr == null) {
-                        mgr = new LocalActivityManager((Activity) mContext, true);
-                        mgr.dispatchCreate(null);
-                    }
-                    Window window = mgr.startActivity("TAG_Video", intent);
-                    mMapDecorView = window.getDecorView();
-
-                    RelativeLayout.LayoutParams lp;
-                    if (config.getForceFullScreen()) {
-                        lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                                RelativeLayout.LayoutParams.MATCH_PARENT);
-                        lp.leftMargin = 0;
-                        lp.topMargin = 0;
-                    } else {
-                        lp = new RelativeLayout.LayoutParams(width, height);
-                        lp.leftMargin = x;
-                        lp.topMargin = y;
-                    }
-                    if (config.getScrollWithWeb()) {
-                        AbsoluteLayout.LayoutParams layoutParams = new AbsoluteLayout.LayoutParams(width, height, x, y);
-                        addViewToWebView(mMapDecorView, layoutParams, "Video_Player_View");
-                    } else {
-                        addView2CurrentWindow(mMapDecorView, lp);
-                    }
-                }
-            });
-        } catch (JSONException e) {
-            Log.i(TAG, e.getMessage());
+        String src = openVO.src;
+        if (TextUtils.isEmpty(src)) {
+            errorCallback(0, EUExCallback.F_ERROR_CODE_VIDEO_OPEN_ARGUMENTS_ERROR, finder.getString("path_error"));
+            Log.i(TAG, "src is empty");
+            return;
         }
+        int startTime = openVO.startTime;
+        boolean autoStart = openVO.autoStart;
+        boolean forceFullScreen = openVO.forceFullScreen;
+        boolean showCloseButton = openVO.showCloseButton;
+        boolean showScaleButton = openVO.showScaleButton;
+
+        final int width = openVO.width;
+        final int height = openVO.height;
+        final int x = openVO.x;
+        final int y = openVO.y;
+        scrollWithWeb = openVO.scrollWithWeb;
+
+        //如果设置了强制全屏，则一定要显示"关闭"按钮，不显示scaleButton, 不允许跟随网页滑动。
+        if (forceFullScreen) {
+            showCloseButton = true;
+            showScaleButton = false;
+            scrollWithWeb = false;
+        }
+
+        ((Activity) mContext).runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                if (mMapDecorView != null) {
+                    Log.i("uexVideo", "already open");
+                    return;
+                }
+                Intent intent = new Intent();
+                intent.putExtra("playerConfig", openVO);
+                intent.putExtra("EUExVideo", EUExVideo.this);
+                intent.setClass(mContext, VideoPlayerActivityForViewToWeb.class);
+                //mContext.startActivity(intent);
+                if (mgr == null) {
+                    mgr = new LocalActivityManager((Activity) mContext, true);
+                    mgr.dispatchCreate(null);
+                }
+                Window window = mgr.startActivity("TAG_Video", intent);
+                mMapDecorView = window.getDecorView();
+
+                RelativeLayout.LayoutParams lp;
+                if (openVO.forceFullScreen) {
+                    lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                            RelativeLayout.LayoutParams.MATCH_PARENT);
+                    lp.leftMargin = 0;
+                    lp.topMargin = 0;
+                } else {
+                    lp = new RelativeLayout.LayoutParams(width, height);
+                    lp.leftMargin = x;
+                    lp.topMargin = y;
+                }
+                if (openVO.scrollWithWeb) {
+                    AbsoluteLayout.LayoutParams layoutParams = new AbsoluteLayout.LayoutParams(width, height, x, y);
+                    addViewToWebView(mMapDecorView, layoutParams, "Video_Player_View");
+                } else {
+                    addView2CurrentWindow(mMapDecorView, lp);
+                }
+            }
+        });
 
 
 	}
