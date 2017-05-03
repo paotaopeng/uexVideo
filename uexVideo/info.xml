@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin uexName="uexVideo" version="4.0.2" build = "2">
-        <info>2:UI改版</info>
+    <plugin uexName="uexVideo" version="4.0.3" build = "3">
+        <info>3:支持endTime</info>
+        <build>2:UI改版</build>
         <build>1:添加播放完毕后的监听</build>
         <build>0:4.0</build>
 	</plugin>
