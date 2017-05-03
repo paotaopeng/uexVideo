@@ -137,9 +137,9 @@ public class VideoCaptureView extends FrameLayout implements OnClickListener {
 
 	public void setFlashButtonBg(boolean open){
         if (open){
-            mFlashIv.setBackgroundResource(EUExUtil.getResDrawableID("plugin_video_flash_close"));
-        }else {
             mFlashIv.setBackgroundResource(EUExUtil.getResDrawableID("plugin_video_flash_open"));
+        }else {
+            mFlashIv.setBackgroundResource(EUExUtil.getResDrawableID("plugin_video_flash_close"));
         }
     }
 
