@@ -19,13 +19,13 @@ public class OpenVO implements Serializable {
 
     public boolean showScaleButton=false;
 
-    public int width=-1;
+    public double width=-1;
 
-    public int height=-1;
+    public double height=-1;
 
-    public int x;
+    public double x;
 
-    public int y;
+    public double y;
 
     public boolean scrollWithWeb=true;
 

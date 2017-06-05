@@ -140,10 +140,10 @@ public class EUExVideo extends EUExBase implements Parcelable{
         boolean showCloseButton = openVO.showCloseButton;
         boolean showScaleButton = openVO.showScaleButton;
 
-        final int width = openVO.width;
-        final int height = openVO.height;
-        final int x = openVO.x;
-        final int y = openVO.y;
+        final int width = (int) openVO.width;
+        final int height = (int) openVO.height;
+        final int x = (int) openVO.x;
+        final int y = (int) openVO.y;
         scrollWithWeb = openVO.scrollWithWeb;
 
         //如果设置了强制全屏，则一定要显示"关闭"按钮，不显示scaleButton, 不允许跟随网页滑动。

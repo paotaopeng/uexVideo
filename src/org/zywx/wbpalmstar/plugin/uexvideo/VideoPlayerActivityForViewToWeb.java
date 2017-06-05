@@ -191,10 +191,10 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
             alertMessage("invalid params", true);
         }
 
-        x_activity = config.x;
-		y_activity = config.y;
-        w_activity = config.width;
-        h_activity = config.height;
+        x_activity = (int) config.x;
+		y_activity = (int) config.y;
+        w_activity = (int) config.width;
+        h_activity = (int) config.height;
 		mUexBaseObj = intent.getParcelableExtra("EUExVideo");
         startTime = config.startTime;
         endTime=config.endTime*1000;
