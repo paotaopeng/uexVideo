@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin uexName="uexVideo" version="4.0.4" build = "4">
-        <info>4:宽高支持传小数</info>
+    <plugin uexName="uexVideo" version="4.0.5" build = "5">
+        <info>5:视屏全屏播放时显示为横屏</info>
+        <build>4:宽高支持传小数</build>
         <build>3:支持endTime</build>
         <build>2:UI改版</build>
         <build>1:添加播放完毕后的监听</build>

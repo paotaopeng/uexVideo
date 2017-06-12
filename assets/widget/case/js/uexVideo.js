@@ -7,7 +7,8 @@ if (UNIT_TEST) {
         "openPlayer": function () {
             openPlayer();
             UNIT_TEST.assert(true);
-        },
+        }
+        /*,
         "closePlayer":function () {
             openPlayer();
             setTimeout(' uexVideo.closePlayer();' +
@@ -48,7 +49,7 @@ if (UNIT_TEST) {
                     setTimeout("uexVideo.closePlayer();",1000);
                 }
             };
-        },
+        },*/
     };
 
     function openPlayer() {

@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
 import android.media.AudioManager;
@@ -204,10 +205,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 		showCloseButton = config.showCloseButton;
         scrollWithWeb = config.scrollWithWeb;
 
-		DisplayMetrics metrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		screenHeight = metrics.heightPixels;
-		screenWidth = metrics.widthPixels;
+        setScreenSize();
 		setContentView(finder.getLayoutId("plugin_video_player_main2"));
 		initViews();
 		m_display.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -215,9 +213,17 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 		m_display.getHolder().addCallback(callback);
 
 		handler.post(checkPlayTimeRunnable);
-	}
+    }
 
-	Runnable checkPlayTimeRunnable=new Runnable() {
+    private void setScreenSize() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        screenHeight = metrics.heightPixels;
+        screenWidth = metrics.widthPixels;
+        Log.i(TAG, "setScreenSize:" + screenWidth + "," + screenHeight);
+    }
+
+    Runnable checkPlayTimeRunnable=new Runnable() {
 		@Override
 		public void run() {
 			if (endTime!=0&&mediaPlayer!=null&&mediaPlayer.getCurrentPosition()>endTime){
@@ -598,6 +604,8 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 
 	public void setVideoDisplayMode(int mode) {
         if (mode == MODE_FULL_SCEEN) { //全屏
+            VideoPlayerActivityForViewToWeb.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            setScreenSize();
             if (videoHeight != 0 && videoWidth != 0) {
                 // 计算屏幕与视频的缩放比
                 final float widthScaleRate = (float) screenWidth / (float) videoWidth;
@@ -610,6 +618,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
                 m_ivScreenAdjust.setBackgroundResource(finder.getDrawableId("plugin_video_fullscreen_selector"));
             }
         } else {
+            VideoPlayerActivityForViewToWeb.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             final LayoutParams lp = m_display.getLayoutParams();
             lp.height = h_activity;
             lp.width = w_activity;
@@ -651,7 +660,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 
 	@Override
 	public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-        if (videoWidth == 0 || videoWidth == 0) {// 第一次进入
+        if (videoWidth == 0 || videoHeight == 0) {// 第一次进入
             if (width != 0 && height != 0) {
                 videoWidth = width;
                 videoHeight = height;
