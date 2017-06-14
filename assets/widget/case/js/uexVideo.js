@@ -60,6 +60,7 @@ if (UNIT_TEST) {
             forceFullScreen: false,
             showCloseButton: true,
             showScaleButton: true,
+            isAutoEndFullScreen: true,
             width: 650,
             height: 480,
             x: 100,

@@ -29,4 +29,6 @@ public class OpenVO implements Serializable {
 
     public boolean scrollWithWeb=true;
 
+    public boolean isAutoEndFullScreen = false;
+
 }

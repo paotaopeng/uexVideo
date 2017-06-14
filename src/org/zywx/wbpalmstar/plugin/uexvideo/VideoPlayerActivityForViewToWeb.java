@@ -119,6 +119,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 	private boolean showCloseButton; //是否显示 关闭 按钮
     private boolean showScaleButton; //是否显示 缩放 按钮
     private boolean scrollWithWeb;
+    private boolean isAutoEndFullScreen;//是否自动结束全屏播放
 
 	private int passTime;
 	private int totalTime;
@@ -204,6 +205,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         forceFullScreen = config.forceFullScreen;
 		showCloseButton = config.showCloseButton;
         scrollWithWeb = config.scrollWithWeb;
+        isAutoEndFullScreen = config.isAutoEndFullScreen;
 
         setScreenSize();
 		setContentView(finder.getLayoutId("plugin_video_player_main2"));
@@ -599,6 +601,15 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         switchControllersVisiblity();
         m_ivPlayPause.setBackgroundResource(finder.getDrawableId("plugin_video_play_selector"));
         mUexBaseObj.callBackPluginJs(EUExVideo.F_CALLBACK_ON_PLAYER_FINISH, "");
+        if(isAutoEndFullScreen && displayMode == MODE_FULL_SCEEN && !forceFullScreen){//切换成非全屏
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setVideoDisplayMode(MODE_SCALE);
+                    toogleFullScreen();
+                }
+            }, 1000);
+        }
 	}
 
 
