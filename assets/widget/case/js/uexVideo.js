@@ -27,6 +27,12 @@ if (UNIT_TEST) {
                 UNIT_TEST.assert(true);
             };
         },
+        "videoPicker":function () {
+            uexVideo.videoPicker();
+            uexVideo.onVideoPickerClosed = function(data){
+                UNIT_TEST.assert(true);
+            };
+        },
         "onPlayerClose":function () {
             UNIT_TEST.log("请手动关闭播放器");
             var assert=false;

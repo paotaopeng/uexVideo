@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin uexName="uexVideo" version="4.0.6" build = "6">
-        <info>6:openPlayer接口新增isAutoEndFullScreen参数</info>
+    <plugin uexName="uexVideo" version="4.0.7" build = "7">
+        <info>7:新增videoPicker接口</info>
+        <build>6:openPlayer接口新增isAutoEndFullScreen参数</build>
         <build>5:视屏全屏播放时显示为横屏</build>
         <build>4:宽高支持传小数</build>
         <build>3:支持endTime</build>
