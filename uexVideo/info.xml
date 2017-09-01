@@ -8,5 +8,5 @@
         <build>2:UI改版</build>
         <build>1:添加播放完毕后的监听</build>
         <build>0:4.0</build>
-	</plugin>
+    </plugin>
 </uexplugins>

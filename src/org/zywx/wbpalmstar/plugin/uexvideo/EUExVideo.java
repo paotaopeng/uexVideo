@@ -52,19 +52,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @SuppressWarnings("deprecation")
-public class EUExVideo extends EUExBase implements Parcelable{
+public class EUExVideo extends EUExBase implements Parcelable {
 
     public static final int F_ACT_REQ_CODE_UEX_VIDEO_RECORD = 5;
     public static final String F_CALLBACK_NAME_VIDEO_RECORD_FINISH = "uexVideo.onRecordFinish";
     public static final String F_CALLBACK_ON_PLAYER_CLOSE = "uexVideo.onPlayerClose";
     public static final String F_CALLBACK_ON_PLAYER_STATUS_CHANGE = "uexVideo.onPlayerStatusChange";
-    public static final String F_CALLBACK_ON_PLAYER_FINISH = "uexVideo.onPlayerFinish" ;
-    public static final String F_CALLBACK_ON_PLAYER_ENDTIME = "uexVideo.onPlayerEndTime" ;
+    public static final String F_CALLBACK_ON_PLAYER_FINISH = "uexVideo.onPlayerFinish";
+    public static final String F_CALLBACK_ON_PLAYER_ENDTIME = "uexVideo.onPlayerEndTime";
 
     private ResoureFinder finder;
 
     private View mMapDecorView;
-	private static LocalActivityManager mgr;
+    private static LocalActivityManager mgr;
     private String TAG = "EUExVideo";
 
     private boolean scrollWithWeb = false;
@@ -76,21 +76,21 @@ public class EUExVideo extends EUExBase implements Parcelable{
         finder = ResoureFinder.getInstance(context);
     }
 
-	public static void onActivityResume(Context context){
-		if(mgr != null){
-			mgr.dispatchResume();
-		}
-	}
+    public static void onActivityResume(Context context) {
+        if (mgr != null) {
+            mgr.dispatchResume();
+        }
+    }
 
-	public static void onActivityPause(Context context){
-		if(mgr != null){
-			mgr.dispatchPause(((Activity) context).isFinishing());
-		}
-	}
+    public static void onActivityPause(Context context) {
+        if (mgr != null) {
+            mgr.dispatchPause(((Activity) context).isFinishing());
+        }
+    }
 
-	/**
-	 * 打开视频播放器
-	 */
+    /**
+     * 打开视频播放器
+     */
     public void open(String[] params) {
         if (params.length < 1) {
             return;
@@ -105,23 +105,22 @@ public class EUExVideo extends EUExBase implements Parcelable{
             Log.i("uexVideo", "path_error");
             return;
         }
-		String realPath = BUtility.makeRealPath(fullPath, mBrwView);
+        String realPath = BUtility.makeRealPath(fullPath, mBrwView);
         Uri url = Uri.parse(realPath);
         intent.setData(url);
         intent.setClass(mContext, VideoPlayerActivity.class);
         mContext.startActivity(intent);
-	}
+    }
 
-	/**
-	 * 打开视频播放器(新的view)
-	 *
-	 */
-	public void openPlayer(final String[] params) {
+    /**
+     * 打开视频播放器(新的view)
+     */
+    public void openPlayer(final String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
             return;
         }
-        WindowManager wm = ((Activity)mContext).getWindowManager();
+        WindowManager wm = ((Activity) mContext).getWindowManager();
 
         int screenWidth = wm.getDefaultDisplay().getWidth();
         int screenHeight = wm.getDefaultDisplay().getHeight();
@@ -194,37 +193,35 @@ public class EUExVideo extends EUExBase implements Parcelable{
         });
 
 
-	}
+    }
 
 
-	/**
-	 * @param child
-	 * @param parms
-	 */
-	private void addView2CurrentWindow(View child,
-			RelativeLayout.LayoutParams parms) {
-		int l = (int) (parms.leftMargin);
-		int t = (int) (parms.topMargin);
-		int w = parms.width;
-		int h = parms.height;
-		FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(w, h);
-		lp.gravity = Gravity.NO_GRAVITY;
-		lp.leftMargin = l;
-		lp.topMargin = t;
-		// adptLayoutParams(parms, lp);
-		// Log.i(TAG, "addView2CurrentWindow");
-		mBrwView.addViewToCurrentWindow(child, lp);
+    /**
+     * @param child
+     * @param parms
+     */
+    private void addView2CurrentWindow(View child,
+                                       RelativeLayout.LayoutParams parms) {
+        int l = (int) (parms.leftMargin);
+        int t = (int) (parms.topMargin);
+        int w = parms.width;
+        int h = parms.height;
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(w, h);
+        lp.gravity = Gravity.NO_GRAVITY;
+        lp.leftMargin = l;
+        lp.topMargin = t;
+        // adptLayoutParams(parms, lp);
+        // Log.i(TAG, "addView2CurrentWindow");
+        mBrwView.addViewToCurrentWindow(child, lp);
 
-	}
-
-
+    }
 
 
     /**
      * 关闭播放器
      */
-	public void closePlayer(String[] param){
-		((Activity)mContext).runOnUiThread(new Runnable() {
+    public void closePlayer(String[] param) {
+        ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (mMapDecorView != null) {
@@ -239,7 +236,7 @@ public class EUExVideo extends EUExBase implements Parcelable{
             }
         });
 
-	}
+    }
 
     public void closePlayerCallBack(String src, int progress) {
         JSONObject jsonObject = new JSONObject();
@@ -268,7 +265,7 @@ public class EUExVideo extends EUExBase implements Parcelable{
             //默认的采样频率为高采样率，录制的视屏质量高, 取值为0, 1, 2, 默认为0, 0: 高采样率, 1: 中采样率, 2: 低采样率
             int rateType = jsonObject.optInt("bitRateType", 0);
             //默认的视频尺寸 取值为0,1,2,默认为0。0:1920x1080, 1:1280x720, 2:640x480
-            int  qualityType = jsonObject.optInt("qualityType", 0);
+            int qualityType = jsonObject.optInt("qualityType", 0);
             PredefinedCaptureConfigurations.CaptureResolution resolution;
             switch (qualityType) {
                 case 0:
@@ -373,20 +370,20 @@ public class EUExVideo extends EUExBase implements Parcelable{
 
     @Override
     protected boolean clean() {
-    	Log.i("uexVideo", "clean");
+        Log.i("uexVideo", "clean");
         return false;
     }
 
-	@Override
-	public int describeContents() {
-		return 0;
-	}
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-	}
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+    }
 
-    public void callBackPluginJs(String methodName, String jsonData){
+    public void callBackPluginJs(String methodName, String jsonData) {
         String js = SCRIPT_HEADER + "if(" + methodName + "){"
                 + methodName + "('" + jsonData + "');}";
         onCallback(js);
