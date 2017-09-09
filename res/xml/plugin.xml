@@ -9,6 +9,7 @@
         <method name="openPlayer" />
         <method name="record" />
         <method name="closePlayer" />
+        <method name="videoPicker" />
     </plugin>
      <plugin
         className="org.zywx.wbpalmstar.plugin.uexfilemgr.EUExFileMgr"

@@ -8,6 +8,7 @@
          <method name="openPlayer" />
          <method name="record" />
          <method name="closePlayer" />
+         <method name="videoPicker" />
     </plugin>
     
 </uexplugins>
