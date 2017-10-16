@@ -118,6 +118,19 @@ public class EUExVideo extends EUExBase implements Parcelable {
     }
 
     /**
+     * 根据手机的分辨率从 dip 的单位 转成为 px(像素)
+     */
+    private int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    private int px2dip(Context context, float pxValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+    }
+
+    /**
      * 打开视频播放器(新的view)
      */
     public void openPlayer(final String[] params) {
@@ -145,9 +158,14 @@ public class EUExVideo extends EUExBase implements Parcelable {
         boolean showScaleButton = openVO.showScaleButton;
 
         final int width = (int) openVO.width;
+        //final int width = px2dip(mContext, (float) openVO.width);
         final int height = (int) openVO.height;
+        // final int height = px2dip(mContext, (float) openVO.height);
         final int x = (int) openVO.x;
+
         final int y = (int) openVO.y;
+
+
         scrollWithWeb = openVO.scrollWithWeb;
 
         //如果设置了强制全屏，则一定要显示"关闭"按钮，不显示scaleButton, 不允许跟随网页滑动。
@@ -155,6 +173,9 @@ public class EUExVideo extends EUExBase implements Parcelable {
             showCloseButton = true;
             showScaleButton = false;
             scrollWithWeb = false;
+            openVO.scrollWithWeb = false;
+            openVO.showCloseButton = true;
+            openVO.showScaleButton = false;
         }
 
         ((Activity) mContext).runOnUiThread(new Runnable() {
@@ -162,7 +183,7 @@ public class EUExVideo extends EUExBase implements Parcelable {
             @Override
             public void run() {
                 if (mMapDecorView != null) {
-                    Log.i("uexVideo", "already open");
+                    Log.i("corVideo", "already open");
                     return;
                 }
                 Intent intent = new Intent();
@@ -235,8 +256,8 @@ public class EUExVideo extends EUExBase implements Parcelable {
         });
     }
 
-    public void videoPicker(String[] params){
-        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+    public void videoPicker(String[] params) {
+        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, REQUEST_VIDEO_PICKER);
     }
 
@@ -424,7 +445,7 @@ public class EUExVideo extends EUExBase implements Parcelable {
         onCallback(js);
     }
 
-    private void callBackPluginJsByJSON(String methodName, String jsonData){
+    private void callBackPluginJsByJSON(String methodName, String jsonData) {
         String js = SCRIPT_HEADER + "if(" + methodName + "){"
                 + methodName + "(" + jsonData + ");}";
         onCallback(js);

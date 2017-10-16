@@ -120,7 +120,7 @@ public class NativeCamera {
         for (int i = 0; i < numberOfCameras; i++) {
             CameraInfo info = new CameraInfo();
             Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+            if (info.facing == CameraInfo.CAMERA_FACING_BACK) {
                 cameraId = i;
                 break;
             }

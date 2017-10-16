@@ -6,19 +6,18 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
-import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.view.SurfaceHolder;
 
 import org.zywx.wbpalmstar.base.BConstant;
 import org.zywx.wbpalmstar.base.BDebug;
-import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.CLog;
-import org.zywx.wbpalmstar.plugin.uexvideo.lib.camera.OpenCameraException.OpenType;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.preview.SensorController;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
@@ -28,7 +27,7 @@ public class CameraWrapper {
 
 
     private NativeCamera mNativeCamera = null;
-    private Parameters   mParameters   = null;
+    private Parameters mParameters = null;
 
     public CameraWrapper(NativeCamera nativeCamera, int displayRotation) {
         mNativeCamera = nativeCamera;
@@ -36,14 +35,14 @@ public class CameraWrapper {
         SensorController.getInstance(BConstant.app).setCameraFocusListener(new SensorController.CameraFocusListener() {
             @Override
             public void onFocus() {
-                try{
+                try {
                     mNativeCamera.getNativeCamera().autoFocus(new Camera.AutoFocusCallback() {
                         @Override
                         public void onAutoFocus(boolean success, Camera camera) {
 
                         }
                     });
-                }catch (Exception e){
+                } catch (Exception e) {
                     if (BDebug.DEBUG) {
                         e.printStackTrace();
                     }
@@ -53,22 +52,24 @@ public class CameraWrapper {
 
     }
 
-    public void openFlash(){
-        try{
-            Camera.Parameters mParameters;
+    public void openFlash() {
+        try {
+            Parameters mParameters;
             mParameters = getCamera().getParameters();
-            mParameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            mParameters.setFlashMode(Parameters.FLASH_MODE_TORCH);
             getCamera().setParameters(mParameters);
-        } catch(Exception ex){}
+        } catch (Exception ex) {
+        }
     }
 
-    public void closeFlash(){
-        try{
-            Camera.Parameters mParameters;
+    public void closeFlash() {
+        try {
+            Parameters mParameters;
             mParameters = getCamera().getParameters();
             mParameters.setFlashMode(Parameters.FLASH_MODE_OFF);
             getCamera().setParameters(mParameters);
-        } catch(Exception ex){}
+        } catch (Exception ex) {
+        }
     }
 
     public Camera getCamera() {
@@ -80,10 +81,11 @@ public class CameraWrapper {
             mNativeCamera.openNativeCamera();
         } catch (final RuntimeException e) {
             e.printStackTrace();
-            throw new OpenCameraException(OpenType.INUSE);
+            throw new OpenCameraException(OpenCameraException.OpenType.INUSE);
         }
 
-        if (mNativeCamera.getNativeCamera() == null) throw new OpenCameraException(OpenType.NOCAMERA);
+        if (mNativeCamera.getNativeCamera() == null)
+            throw new OpenCameraException(OpenCameraException.OpenType.NOCAMERA);
         SensorController.getInstance(BConstant.app).start();
     }
 
@@ -105,7 +107,7 @@ public class CameraWrapper {
         mNativeCamera.setNativePreviewDisplay(holder);
         mNativeCamera.startNativePreview();
 
-      }
+    }
 
     public void changeCamera(final SurfaceHolder holder) throws IOException {
         mNativeCamera.changeCamera(holder);
@@ -118,7 +120,8 @@ public class CameraWrapper {
     }
 
     public RecordingSize getSupportedRecordingSize(int width, int height) {
-        CameraSize recordingSize = getOptimalSize(getSupportedVideoSizes(VERSION.SDK_INT), width, height);
+        //  CameraSize recordingSize = getOptimalSize(getSupportedVideoSizes(VERSION.SDK_INT), width, height);
+        CameraSize recordingSize = getOptimalCameraSize(getSupportedVideoSizes(VERSION.SDK_INT), width, height);
         if (recordingSize == null) {
             CLog.e(CLog.CAMERA, "Failed to find supported recording size - falling back to requested: " + width + "x" + height);
             return new RecordingSize(width, height);
@@ -155,8 +158,15 @@ public class CameraWrapper {
 
     public void configureForPreview(int viewWidth, int viewHeight) {
         final Parameters params = mNativeCamera.getNativeCameraParameters();
-        final CameraSize previewSize = getOptimalSize(params.getSupportedPreviewSizes(), viewWidth, viewHeight);
-
+        List<Size> supportedPreviewSizes = params.getSupportedPreviewSizes();
+//        for (int i = 0; i < supportedPreviewSizes.size(); i++) {
+//            Size size = supportedPreviewSizes.get(i);
+//            Log.d("androidmm", "supportedPreviewSizes >>>>" + size.width + "  " + size.height);
+//
+//        }
+        final CameraSize previewSize = getOptimalCameraSize(supportedPreviewSizes, viewWidth, viewHeight);
+        //  final CameraSize previewSize = getOptimalSize(supportedPreviewSizes, viewWidth, viewHeight);
+        //  Log.d("androidmm", "previewSize >>>>" + previewSize.getWidth() + "  " + previewSize.getHeight());
         params.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
 //        if (params.getMaxNumMeteringAreas() > 0){ // check that metering areas are supported
 //            List<Camera.Area> meteringAreas = new ArrayList<Camera.Area>();
@@ -192,7 +202,7 @@ public class CameraWrapper {
         Parameters params = mNativeCamera.getNativeCameraParameters();
 
         List<Size> supportedVideoSizes;
-        if (currentSdkInt < Build.VERSION_CODES.HONEYCOMB) {
+        if (currentSdkInt < VERSION_CODES.HONEYCOMB) {
             CLog.e(CLog.CAMERA, "Using supportedPreviewSizes iso supportedVideoSizes due to API restriction");
             supportedVideoSizes = params.getSupportedPreviewSizes();
         } else if (params.getSupportedVideoSizes() == null) {
@@ -204,6 +214,74 @@ public class CameraWrapper {
 
         return supportedVideoSizes;
     }
+
+
+    /**
+     * @param sizes 相机support参数
+     * @param w
+     * @param h
+     * @return 最佳Camera size
+     */
+    private CameraSize getOptimalCameraSize(List<Camera.Size> sizes, int w, int h) {
+        sortCameraSize(sizes);
+        int position = binarySearch(sizes, w * h);
+        Size optimalSize = sizes.get(position);
+        return new CameraSize(optimalSize.width, optimalSize.height);
+    }
+
+    /**
+     * @param sizes
+     * @param targetNum 要比较的数
+     * @return
+     */
+    private int binarySearch(List<Camera.Size> sizes, int targetNum) {
+        int targetIndex;
+        int left = 0, right;
+        int length = sizes.size();
+        for (right = length - 1; left != right; ) {
+            int midIndex = (right + left) / 2;
+            int mid = right - left;
+            Camera.Size size = sizes.get(midIndex);
+            int midValue = size.width * size.height;
+            if (targetNum == midValue) {
+                return midIndex;
+            }
+            if (targetNum > midValue) {
+                left = midIndex;
+            } else {
+                right = midIndex;
+            }
+
+            if (mid <= 1) {
+                break;
+            }
+        }
+        Camera.Size rightSize = sizes.get(right);
+        Camera.Size leftSize = sizes.get(left);
+        int rightNum = rightSize.width * rightSize.height;
+        int leftNum = leftSize.width * leftSize.height;
+        targetIndex = Math.abs((rightNum - leftNum) / 2) > Math.abs(rightNum - targetNum) ? right : left;
+        return targetIndex;
+    }
+
+    /**
+     * 排序
+     *
+     * @param previewSizes
+     */
+    private void sortCameraSize(List<Camera.Size> previewSizes) {
+        Collections.sort(previewSizes, new Comparator<Size>() {
+            @Override
+            public int compare(Camera.Size size1, Camera.Size size2) {
+                int compareHeight = size1.height - size2.height;
+                if (compareHeight == 0) {
+                    return (size1.width == size2.width ? 0 : (size1.width > size2.width ? 1 : -1));
+                }
+                return compareHeight;
+            }
+        });
+    }
+
 
     /**
      * Copyright (C) 2013 The Android Open Source Project
@@ -220,13 +298,13 @@ public class CameraWrapper {
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    public CameraSize getOptimalSize(List<Camera.Size> sizes, int w, int h) {
+    public CameraSize getOptimalSize(List<Size> sizes, int w, int h) {
         // Use a very small tolerance because we want an exact match.
         final double ASPECT_TOLERANCE = 0.1;
         final double targetRatio = (double) w / h;
         if (sizes == null) return null;
 
-        Camera.Size optimalSize = null;
+        Size optimalSize = null;
 
         // Start with max value and refine as we iterate over available preview sizes. This is the
         // minimum difference between view and camera height.
@@ -238,7 +316,7 @@ public class CameraWrapper {
         // Try to find a preview size that matches aspect ratio and the target view size.
         // Iterate over all available sizes and pick the largest size that can fit in the view and
         // still maintain the aspect ratio.
-        for (final Camera.Size size : sizes) {
+        for (final Size size : sizes) {
             final double ratio = (double) size.width / size.height;
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
                 continue;
@@ -252,7 +330,7 @@ public class CameraWrapper {
         // Cannot find preview size that matches the aspect ratio, ignore the requirement
         if (optimalSize == null) {
             minDiff = Double.MAX_VALUE;
-            for (final Camera.Size size : sizes) {
+            for (final Size size : sizes) {
                 if (Math.abs(size.height - targetHeight) < minDiff) {
                     optimalSize = size;
                     minDiff = Math.abs(size.height - targetHeight);

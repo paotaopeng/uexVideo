@@ -138,7 +138,7 @@ public class CaptureConfiguration implements Parcelable {
         dest.writeInt(VIDEO_ENCODER);
     }
 
-    public static final Parcelable.Creator<CaptureConfiguration> CREATOR = new Parcelable.Creator<CaptureConfiguration>() {
+    public static final Creator<CaptureConfiguration> CREATOR = new Creator<CaptureConfiguration>() {
         @Override
         public CaptureConfiguration createFromParcel(
                 Parcel in) {
