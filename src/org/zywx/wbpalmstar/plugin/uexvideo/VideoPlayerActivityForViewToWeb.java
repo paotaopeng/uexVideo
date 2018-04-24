@@ -95,7 +95,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
     private int lastPlayPostion;
     private SurfaceView m_display;
     private SurfaceHolder surfaceHolder;
-    private ImageView ivClose;
+    private TextView ivClose;
     private ImageView ivProgress;
 
     private ImageView m_ivPlayPause;
@@ -116,11 +116,15 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
     private boolean forceFullScreen; //是否强制全屏显示
     private boolean showCloseButton; //是否显示 关闭 按钮
     private boolean showScaleButton; //是否显示 缩放 按钮
+    private boolean showCloseDialog; //是否显示关闭确认对话框
     private boolean scrollWithWeb;
     private boolean isAutoEndFullScreen;//是否自动结束全屏播放
-
+    private boolean canSeek;//是否允许拖动进度条
+    private String title;//视频标题
+    private String exitMsgContent;//退出视频标题
     private int passTime;
     private int totalTime;
+    private int orientation;//屏幕方向
     private int displayMode = MODE_SCALE;
     private boolean isUserSeekingBar = false;
     private AlphaAnimation fadeInAnim;
@@ -177,7 +181,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
     private int h_activity = 0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+        protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         finder = ResoureFinder.getInstance(this);
         getWindow().getDecorView().setBackgroundDrawable(null);
@@ -200,17 +204,28 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         w_activity = (int) config.width * getDensity();
         h_activity = (int) config.height * getDensity();
         mUexBaseObj = intent.getParcelableExtra("EUExVideo");
+        mUexBaseObj.setOnPlayerCloseWarnListener(new EUExVideo.OnPlayerCloseWarnListener() {
+            @Override
+            public void onPlayerCloseWarn() {
+                closePlayerHandler();
+            }
+        });
+        orientation=config.orientationAfterExit;
         startTime = config.startTime;
         endTime = config.endTime * 1000;
         autoStart = config.autoStart;
         showScaleButton = config.showScaleButton;
         forceFullScreen = config.forceFullScreen;
         showCloseButton = config.showCloseButton;
+        showCloseDialog = config.showCloseDialog;
         scrollWithWeb = config.scrollWithWeb;
         isAutoEndFullScreen = config.isAutoEndFullScreen;
-
+        canSeek =config.canSeek;
+        title=config.title;
+        exitMsgContent=config.exitMsgContent;
         setScreenSize();
         setContentView(finder.getLayoutId("plugin_video_player_main2"));
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//强制横屏
         initViews();
         m_display.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         m_display.getHolder().setKeepScreenOn(true);
@@ -242,7 +257,8 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         initAnimation();
 
         m_display = (SurfaceView) findViewById(finder.getId("plugin_video_player_sv_diaplay"));
-        ivClose = (ImageView) findViewById(finder.getId("plugin_video_player_iv_close"));
+        ivClose = (TextView) findViewById(finder.getId("plugin_video_player_iv_close"));
+        ivClose.setText(title);
         ivProgress = (ImageView) findViewById(finder.getId("plugin_video_iv_progress_bar"));
         m_ivPlayPause = (ImageView) findViewById(finder.getId("plugin_video_player_play_pause"));
         m_ivScreenAdjust = (ImageView) findViewById(finder.getId("plugin_video_player_iv_screen_adjust"));
@@ -262,7 +278,11 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         } else {
             m_ivScreenAdjust.setVisibility(View.GONE);
         }
-        m_sbTimeLine.setOnSeekBarChangeListener(this);
+        if(canSeek){
+            m_sbTimeLine.setOnSeekBarChangeListener(this);
+        }else{
+            m_sbTimeLine.setEnabled(false);
+        }
         m_display.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -274,6 +294,31 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
             ivClose.setVisibility(View.VISIBLE);
         }
         ivClose.setOnClickListener(this);
+    }
+
+    private void closePlayerHandler(){
+        if(showCloseDialog){
+            pauseVideoHandler();
+            new AlertDialog.Builder(this).setTitle("确定退出?").setMessage(exitMsgContent)
+                    .setPositiveButton("退出", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            releaseMediaPlayer();
+                            dialog.dismiss();
+                            orientation=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+                            mUexBaseObj.closePlayer(null);
+                        }
+                    }).setNegativeButton("继续观看", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        playVideoHandler();
+                }
+            }) .show();
+        }else{
+            orientation=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+            mUexBaseObj.closePlayer(null);
+        }
     }
 
     private void initMediaPlayer(String path) {
@@ -289,13 +334,13 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         mediaPlayer.setOnTimedTextListener(new MediaPlayer.OnTimedTextListener() {
             @Override
             public void onTimedText(MediaPlayer mediaPlayer, TimedText timedText) {
-
+                closePlayerHandler();
             }
         });
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
-            if (path.startsWith(BUtility.F_HTTP_PATH) || path.startsWith(BUtility.F_FILE_SCHEMA)
-                    || path.startsWith(BUtility.F_RTSP_PATH) || path.startsWith("/")) {// 直接设置路径
+            if (path.startsWith(BUtility.F_HTTP_PATH) || path.startsWith(BUtility.F_FILE_SCHEMA) ||
+                    path.startsWith("https://") || path.startsWith(BUtility.F_RTSP_PATH) || path.startsWith("/")) {// 直接设置路径
                 if (path.startsWith(BUtility.F_FILE_SCHEMA) || path.startsWith("/")) {
                     path = path.replace("file://", "");
                     mediaPlayer.setDataSource(path);
@@ -387,7 +432,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         if (autoStart) {
             try {
                 if (lastPlayPostion != 0) {
-                    BDebug.d("lastPlayPostion", lastPlayPostion);
+                    Log.d(TAG, String.valueOf(lastPlayPostion));
                     mediaPlayer.seekTo(lastPlayPostion);
                     lastPlayPostion = 0;
                 } else {
@@ -479,6 +524,12 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         }
         int progressOnClose = (int) Math.ceil(passTime / 1000.0);
         releaseMediaPlayer();
+        if(orientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//强制竖屏
+        }else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//强制横屏
+        }
+
         mUexBaseObj.closePlayerCallBack(videoPath, progressOnClose);
     }
 
@@ -523,7 +574,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
     @Override
     public void onClick(View v) {
         if (v == ivClose) {
-            mUexBaseObj.closePlayer(null);
+            closePlayerHandler();
             //this.finish();
         } else if (v == m_ivScreenAdjust) {
             if (displayMode == MODE_FULL_SCEEN) {
@@ -537,32 +588,46 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
             try {
                 switch (curerntState) {
                     case STATE_PLAYING:
-                        mediaPlayer.pause();
-                        curerntState = STATE_PAUSE;
-                        m_ivPlayPause.setBackgroundResource(finder.getDrawableId("plugin_video_play_selector"));
-                        onPlayerStatusChange(PLAYER_STATUS_PAUSE);
+                        pauseVideoHandler();
                         break;
                     case STATE_PAUSE:
-                        if (startTime != 0) {
-                            mediaPlayer.seekTo(startTime * 1000);
-                            BDebug.d("starttime", startTime * 1000);
-                            startTime = 0;
-                        }
-                        mediaPlayer.start();
-                        curerntState = STATE_PLAYING;
-                        onPlayerStatusChange(PLAYER_STATUS_PLAYING);
-                        m_ivPlayPause.setBackgroundResource(finder.getDrawableId("plugin_video_pause_selector"));
-                        if (!autoStart) {
-                            handler.sendEmptyMessage(ACTION_UPDATE_PASS_TIME);
-                        }
+                        playVideoHandler();
                         break;
                 }
             } catch (IllegalStateException e) {
                 alertMessage(finder.getString("plugin_video_player_player_state_call_error"), true);
             }
         }
+
+    }
+
+    private void pauseVideoHandler(){
+        mediaPlayer.pause();
+        curerntState = STATE_PAUSE;
+        m_ivPlayPause.setBackgroundResource(finder.getDrawableId("plugin_video_play_selector"));
+        onPlayerStatusChange(PLAYER_STATUS_PAUSE);
         notifyHideControllers();
     }
+
+    private void playVideoHandler(){
+        if (startTime != 0) {
+            mediaPlayer.seekTo(startTime * 1000);
+            BDebug.d("starttime", startTime * 1000);
+            startTime = 0;
+        }
+        mediaPlayer.start();
+        curerntState = STATE_PLAYING;
+        onPlayerStatusChange(PLAYER_STATUS_PLAYING);
+        m_ivPlayPause.setBackgroundResource(finder.getDrawableId("plugin_video_pause_selector"));
+        if (!autoStart) {
+            handler.sendEmptyMessage(ACTION_UPDATE_PASS_TIME);
+        }
+        notifyHideControllers();
+    }
+
+
+
+
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -571,6 +636,8 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         }
         return super.onKeyUp(keyCode, event);
     }
+
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -596,7 +663,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        if (curerntState == STATE_PLAYING || curerntState == STATE_PAUSE) {
+        if(curerntState == STATE_PLAYING || curerntState == STATE_PAUSE)  {
             if (endTime != 0 && endTime < passTime) {
                 onPlayEndTime();
             } else {

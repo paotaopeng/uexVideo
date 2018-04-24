@@ -40,5 +40,7 @@
         <method name="readPre" />
         <method name="openSecure" />
         <method name="createSecure" />
+        <method name="closePlayerWarn" />
+        <method name="isVideoOpen" />
     </plugin>
 </uexplugins>

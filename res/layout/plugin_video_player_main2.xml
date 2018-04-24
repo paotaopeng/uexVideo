@@ -13,14 +13,23 @@
 
 
     <!--左上角的close button-->
-    <ImageView
-        android:id="@+id/plugin_video_player_iv_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:src="@drawable/plugin_video_close"
-        android:visibility="gone"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        >
+        <TextView
+            android:id="@+id/plugin_video_player_iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:drawableLeft="@drawable/plugin_video_close"
+            android:visibility="gone"
+             />
+    </LinearLayout>
+
 
     <ImageView
         android:id="@+id/plugin_video_iv_progress_bar"

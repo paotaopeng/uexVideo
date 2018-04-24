@@ -1,6 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin uexName="uexVideo" version="4.0.8" build = "8">
+    <plugin uexName="uexVideo" version="4.1.8" build = "18">
+        <info>18:支持播放https协议的视频</info>
+        <info>17:调用closePlayerWarn后,设置竖屏返回</info>
+        <info>16:openPlayer接口新增orientationAfterExit参数</info>
+        <info>15:openPlayer接口新增exitMsgContent参数</info>
+        <info>14:openPlayer以横屏模式打开播放器,关闭播放器时设置回竖屏</info>
+        <info>13:openPlayer接口打开的播放器,默认横屏显示</info>
+        <info>12:添加isVideoOpen方法,判断view类的视频是否打开</info>
+        <info>11:添加closePlayerWarn方法</info>
+        <info>10:添加退出确认及视频标题</info>
+        <info>9:添加进度条控制参数</info>
         <info>8:修复record及播放问题</info>
         <build>7:新增videoPicker接口</build>
         <build>6:openPlayer接口新增isAutoEndFullScreen参数</build>

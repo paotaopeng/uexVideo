@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+    <title>
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/ui-res.css">
+    <link rel="stylesheet" href="css/ui-btn.css">
+    <link rel="stylesheet" href="css/index.css">
+
+    <script type="text/javascript">
+		function playVideo(){
+			var iScreenWidth = document.documentElement.clientWidth;
+            var iVideoHeight = iScreenWidth * 9 / 16;
+            var param = {
+                src : "http://www.huihuabao.com/video/index.mp4",
+                title:"慧话宝家长会",
+                startTime : 3,
+                autoStart : true,
+                showCloseButton : false,
+                showScaleButton : true,
+                showCloseDialog : false,
+                width:320,
+                height:240,
+                canSeek:false,
+                scrollWithWeb:true
+
+            }
+            uexVideo.openPlayer(JSON.stringify(param));
+
+		}
+
+        function playActivity(){
+            playVideo();
+            uexWindow.openSlibing({
+                  type:2,
+                  dataType:"0",
+                  url:"a.html",
+                  data:"",
+                  h:275
+                });
+              uexWindow.showSlibing(2);
+              alert(2);
+        }
+
+        appcan.ready(function() {
+            uexWindow.uexOnshow=function(param){
+                alert(param);
+            }
+        });
+
+    </script>
+</head>
+<body class="um-vp " ontouchstart>
+<div class="tit" onclick="backWin();">Audio</div>
+<div class="conbor">
+
+    <div class="consj">
+        <span>播放某段时间的音频</span>
+        <input class="btn" type="button" value="时间段音频播放" onclick="playActivity();">
+
+
+    </div>
+
+</div>
+</body>
+<script>
+
+</script>
+</html>

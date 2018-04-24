@@ -73,12 +73,21 @@ public class EUExVideo extends EUExBase implements Parcelable {
     private String TAG = "EUExVideo";
 
     private boolean scrollWithWeb = false;
-
+    private boolean showCloseDialog=false;
     private String ViewPlayerViewTag = "Video_Player_View";
+    private OnPlayerCloseWarnListener playerCloseWarnListener;
 
     public EUExVideo(Context context, EBrowserView inParent) {
         super(context, inParent);
         finder = ResoureFinder.getInstance(context);
+    }
+
+    public interface OnPlayerCloseWarnListener{
+         void onPlayerCloseWarn();
+    }
+
+    public void setOnPlayerCloseWarnListener(OnPlayerCloseWarnListener listener){
+        playerCloseWarnListener=listener;
     }
 
     public static void onActivityResume(Context context) {
@@ -144,7 +153,6 @@ public class EUExVideo extends EUExBase implements Parcelable {
         int screenHeight = wm.getDefaultDisplay().getHeight();
         Log.i(TAG, "screenWidth:" + screenWidth + "     screenHeight:" + screenHeight);
         final OpenVO openVO = DataHelper.gson.fromJson(params[0], OpenVO.class);
-
         String src = openVO.src;
         if (TextUtils.isEmpty(src)) {
             errorCallback(0, EUExCallback.F_ERROR_CODE_VIDEO_OPEN_ARGUMENTS_ERROR, finder.getString("path_error"));
@@ -156,7 +164,7 @@ public class EUExVideo extends EUExBase implements Parcelable {
         boolean forceFullScreen = openVO.forceFullScreen;
         boolean showCloseButton = openVO.showCloseButton;
         boolean showScaleButton = openVO.showScaleButton;
-
+        showCloseDialog=openVO.showCloseDialog;
         final int width = (int) openVO.width;
         //final int width = px2dip(mContext, (float) openVO.width);
         final int height = (int) openVO.height;
@@ -235,7 +243,17 @@ public class EUExVideo extends EUExBase implements Parcelable {
         mBrwView.addViewToCurrentWindow(child, lp);
     }
 
+    public void closePlayerWarn(String[] params){
+        playerCloseWarnListener.onPlayerCloseWarn();
+    }
 
+    public boolean isVideoOpen(String[] params){
+        boolean isVideoOpen=false;
+        if (mMapDecorView != null) {
+            isVideoOpen=true;
+        }
+        return isVideoOpen;
+    }
     /**
      * 关闭播放器
      */
@@ -255,6 +273,7 @@ public class EUExVideo extends EUExBase implements Parcelable {
             }
         });
     }
+
 
     public void videoPicker(String[] params) {
         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);

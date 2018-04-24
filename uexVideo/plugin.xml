@@ -9,6 +9,8 @@
          <method name="record" />
          <method name="closePlayer" />
          <method name="videoPicker" />
+         <method name="closePlayerWarn" />
+         <method name="isVideoOpen" />
     </plugin>
     
 </uexplugins>
