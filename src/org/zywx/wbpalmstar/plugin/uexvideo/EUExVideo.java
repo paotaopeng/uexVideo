@@ -48,6 +48,7 @@ import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.VideoCaptureActivity;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.configuration.CaptureConfiguration;
 import org.zywx.wbpalmstar.plugin.uexvideo.lib.configuration.PredefinedCaptureConfigurations;
+import org.zywx.wbpalmstar.plugin.uexvideo.listener.OnPlayerListener;
 import org.zywx.wbpalmstar.plugin.uexvideo.vo.OpenVO;
 
 import java.io.File;
@@ -75,19 +76,16 @@ public class EUExVideo extends EUExBase implements Parcelable {
     private boolean scrollWithWeb = false;
     private boolean showCloseDialog=false;
     private String ViewPlayerViewTag = "Video_Player_View";
-    private OnPlayerCloseWarnListener playerCloseWarnListener;
+    private OnPlayerListener onPlayerListener;
+
 
     public EUExVideo(Context context, EBrowserView inParent) {
         super(context, inParent);
         finder = ResoureFinder.getInstance(context);
     }
 
-    public interface OnPlayerCloseWarnListener{
-         void onPlayerCloseWarn();
-    }
-
-    public void setOnPlayerCloseWarnListener(OnPlayerCloseWarnListener listener){
-        playerCloseWarnListener=listener;
+    public void setOnPlayerListener(OnPlayerListener onPlayerListener) {
+        this.onPlayerListener = onPlayerListener;
     }
 
     public static void onActivityResume(Context context) {
@@ -244,7 +242,16 @@ public class EUExVideo extends EUExBase implements Parcelable {
     }
 
     public void closePlayerWarn(String[] params){
-        playerCloseWarnListener.onPlayerCloseWarn();
+        onPlayerListener.onPlayerCloseWarn();
+    }
+
+    public void seekTo(String[] params){
+        if (params == null || params.length < 1) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        int position=Integer.parseInt(params[0]);
+        onPlayerListener.onPlayerSeek(position);
     }
 
     public boolean isVideoOpen(String[] params){

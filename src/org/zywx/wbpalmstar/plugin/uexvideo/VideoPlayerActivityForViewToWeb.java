@@ -67,6 +67,7 @@ import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.ResoureFinder;
+import org.zywx.wbpalmstar.plugin.uexvideo.listener.OnPlayerListener;
 import org.zywx.wbpalmstar.plugin.uexvideo.vo.OpenVO;
 
 /**
@@ -76,9 +77,10 @@ import org.zywx.wbpalmstar.plugin.uexvideo.vo.OpenVO;
  */
 public class VideoPlayerActivityForViewToWeb extends Activity implements OnPreparedListener, OnClickListener,
         OnSeekBarChangeListener, OnCompletionListener, OnErrorListener, OnVideoSizeChangedListener,
-        OnBufferingUpdateListener {
+        OnBufferingUpdateListener,OnPlayerListener {
 
     public static final String TAG = "VideoPlayerActivity";
+
     private final static int ACTION_UPDATE_PASS_TIME = 1;
     private final static int ACTION_HIDE_CONTROLLER = 2;
     private final static int MODE_FULL_SCEEN = 2;// 全屏
@@ -137,6 +139,20 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
     private static final int PLAYER_STATUS_PLAYING = 2;
     private static final int PALYER_STATUS_ERROR = 3;
 
+    @Override
+    public void onPlayerCloseWarn() {
+        closePlayerHandler();
+    }
+
+    @Override
+    public void onPlayerSeek(int position) {
+        mediaPlayer.seekTo(position);
+        mediaPlayer.start();
+        curerntState = STATE_PLAYING;
+        onPlayerStatusChange(PLAYER_STATUS_PLAYING);
+        m_ivPlayPause.setBackgroundDrawable(finder.getDrawable("plugin_video_pause_selector"));
+        handler.sendEmptyMessage(ACTION_UPDATE_PASS_TIME);
+    }
 
     private GestureDetector gestureDetector = new GestureDetector(new SimpleOnGestureListener() {
 
@@ -204,12 +220,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         w_activity = (int) config.width * getDensity();
         h_activity = (int) config.height * getDensity();
         mUexBaseObj = intent.getParcelableExtra("EUExVideo");
-        mUexBaseObj.setOnPlayerCloseWarnListener(new EUExVideo.OnPlayerCloseWarnListener() {
-            @Override
-            public void onPlayerCloseWarn() {
-                closePlayerHandler();
-            }
-        });
+        mUexBaseObj.setOnPlayerListener(this);
         orientation=config.orientationAfterExit;
         startTime = config.startTime;
         endTime = config.endTime * 1000;
@@ -461,6 +472,8 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         m_tvPassTime.setText(formatTime(passTime) + "/" + formatTime(totalTime));
         m_sbTimeLine.setProgress(passTime);
     }
+
+
 
     private void releaseMediaPlayer() {
         if (mediaPlayer != null) {

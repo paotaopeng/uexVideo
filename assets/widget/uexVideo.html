@@ -25,10 +25,8 @@
                 showCloseButton : false,
                 showScaleButton : true,
                 showCloseDialog : false,
-                width:320,
-                height:240,
-                canSeek:false,
-                scrollWithWeb:true
+                canSeek:true
+
 
             }
             uexVideo.openPlayer(JSON.stringify(param));
@@ -36,16 +34,15 @@
 		}
 
         function playActivity(){
-            playVideo();
+        playVideo();
             uexWindow.openSlibing({
                   type:2,
                   dataType:"0",
-                  url:"a.html",
+                  url:"testVideo.html",
                   data:"",
-                  h:275
+                  h:175
                 });
-              uexWindow.showSlibing(2);
-              alert(2);
+            uexWindow.showSlibing(2);
         }
 
         appcan.ready(function() {
