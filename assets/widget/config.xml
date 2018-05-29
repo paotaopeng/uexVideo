@@ -12,7 +12,7 @@
 	<bgcolor>#fefefe</bgcolor>
 	<orientation>1</orientation>
 	<debug>true</debug>
-	<logserverip>192.168.1.130</logserverip>
+	<logserverip>192.168.1.101</logserverip>
 <partobfuscation>false</partobfuscation>
 <webapp/>
 <config desc="uexALiBaiChuan" type="URLSCHEME"> 

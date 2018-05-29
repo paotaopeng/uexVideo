@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest>
 
-     <activity
-            android:name="org.zywx.wbpalmstar.plugin.uexvideo.VideoPlayerActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-     
-     <activity
-            android:name="org.zywx.wbpalmstar.plugin.uexvideo.VideoPlayerActivityForViewToWeb"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+    <activity
+        android:configChanges="orientation|keyboardHidden"
+        android:name="org.zywx.wbpalmstar.plugin.uexvideo.VideoPlayerActivity"
+        android:screenOrientation="landscape"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
-<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-<uses-permission android:name="android.permission.INTERNET"/>
+    <activity
+        android:configChanges="orientation|keyboardHidden"
+        android:name="org.zywx.wbpalmstar.plugin.uexvideo.VideoPlayerActivityForViewToWeb"
+        android:screenOrientation="landscape"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
     <!-- uexVideo -->
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <activity android:name="org.zywx.wbpalmstar.plugin.uexvideo.lib.VideoCaptureActivity"></activity>
 

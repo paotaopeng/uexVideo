@@ -18,16 +18,16 @@
 			var iScreenWidth = document.documentElement.clientWidth;
             var iVideoHeight = iScreenWidth * 9 / 16;
             var param = {
-                src : "http://www.huihuabao.com/video/index.mp4",
+                //src : "http://121.41.55.199/video/8a284e8f577507f50157a26c607b7a88.mp4",
+                src : "http://192.168.1.200/video/111.mp4",
                 title:"慧话宝家长会",
-                startTime : 3,
+                startTime : 0,
                 autoStart : true,
-                showCloseButton : false,
-                showScaleButton : true,
+                forceFullScreen:true,
+                showCloseButton : true,
                 showCloseDialog : false,
-                canSeek:true
-
-
+                canSeek:true,
+                lyric:'[{"lyricStartTime":"7.56","lyricEndTime":"8.49","lyricChineseText":"","lyricEnglishText":"Goodmorning.","lyricUuidProperty":"b1131082f4f8486fa70cd6c1ad5aa899","recordAble":"true"},{"lyricStartTime":"9.74","lyricEndTime":"11.58","lyricChineseText":"","lyricEnglishText":"Goodmorning,Bobby.","lyricUuidProperty":"7e4f6e965dca4b728b73bb710171e17c","recordAble":"true"},{"lyricStartTime":"15.18","lyricEndTime":"16.76","lyricChineseText":"","lyricEnglishText":"Goodmorning,Sam.","lyricUuidProperty":"60d582cae07d4beababa867f0cead165","recordAble":"true"},{"lyricStartTime":"17.83","lyricEndTime":"18.84","lyricChineseText":"","lyricEnglishText":"Goodmorning.","lyricUuidProperty":"aea434fcf3fb445d9ce7e7fb759ed2a4","recordAble":"true"},{"lyricStartTime":"24.16","lyricEndTime":"26.03","lyricChineseText":"","lyricEnglishText":"Hi,I\'mBobby.","lyricUuidProperty":"70c00d6f75a844c5a49d50722308b0ee","recordAble":"true"},{"lyricStartTime":"27.23","lyricEndTime":"29.16","lyricChineseText":"","lyricEnglishText":"Hi,I\'mSam.","lyricUuidProperty":"aaa9e86f46224bc7af6ed9cbe8843afc","recordAble":"true"}]'
             }
             uexVideo.openPlayer(JSON.stringify(param));
 
@@ -51,6 +51,7 @@
             }
         });
 
+
     </script>
 </head>
 <body class="um-vp " ontouchstart>
@@ -59,7 +60,7 @@
 
     <div class="consj">
         <span>播放某段时间的音频</span>
-        <input class="btn" type="button" value="时间段音频播放" onclick="playActivity();">
+        <input class="btn" type="button" value="时间段音频播放" onclick="playVideo();">
 
 
     </div>

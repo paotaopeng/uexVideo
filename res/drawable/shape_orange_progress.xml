@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- 这个是背景颜色 -->
+    <item android:id="@android:id/background">
+        <shape
+            android:drawable="@drawable/btn_background">
+
+            <!-- 这个是设置圆角还会直角，如果设置成0dip就是直角 -->
+            <corners android:radius="100dip" />
+            <!-- 设置背景的颜色，将startColor、centerColor、endColor都设置成同一个颜色值 -->
+            <!--
+                 如果你不用颜色值也可以，可以直接用图片来代替，在item中添加这个属性就可以了，其他的不需要
+                 android:drawable="@drawable/progressbar_bg"
+            -->
+
+            <gradient
+                android:angle="270"
+                android:centerColor="#fe7647"
+                android:centerY="0.75"
+                android:endColor="#fe7647"
+                android:startColor="#fe7647" />
+        </shape>
+    </item>
+
+
+</layer-list>

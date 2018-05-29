@@ -11,7 +11,7 @@
 
 
     <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <application
         android:name="org.zywx.wbpalmstar.widgetone.WidgetOneApplication"
         android:allowClearUserData="false"
@@ -41,7 +41,7 @@
             android:name="org.zywx.wbpalmstar.plugin.uexvideo.VideoPlayerActivityForViewToWeb"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+            android:theme="@style/AppTheme" />
         <!-- uexVideo end -->
         <activity android:name="org.zywx.wbpalmstar.plugin.uexvideo.lib.VideoCaptureActivity"></activity>
     </application>
