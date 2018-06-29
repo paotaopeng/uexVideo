@@ -8,4 +8,6 @@ public interface OnPlayerListener {
     void onPlayerCloseWarn();
 
     void onPlayerSeek(int position);
+
+    void onWordClick(String param);
 }

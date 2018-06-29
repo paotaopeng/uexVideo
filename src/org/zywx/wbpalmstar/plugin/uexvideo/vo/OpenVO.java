@@ -42,4 +42,6 @@ public class OpenVO implements Serializable {
     public boolean canSeek = true;//是否可以拖动进度条
 
     public String lyric;//歌词字幕
+
+    public String videoSize;
 }

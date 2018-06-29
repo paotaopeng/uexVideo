@@ -6,7 +6,7 @@
 			<solid android:color="#adb3b9" />
 		</shape>
 	</item>
-	
+
 	<item android:id="@android:id/secondaryProgress">
 		<clip>
 			<shape>
@@ -14,7 +14,7 @@
 			</shape>
 		</clip>
 	</item>
-	
+
 	<item android:id="@android:id/progress">
 		<clip>
 			<shape>

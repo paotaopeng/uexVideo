@@ -4,7 +4,7 @@
     <!-- 这个是背景颜色 -->
     <item android:id="@android:id/background">
         <shape
-            android:drawable="@drawable/btn_background">
+                android:drawable="@drawable/btn_background">
 
             <!-- 这个是设置圆角还会直角，如果设置成0dip就是直角 -->
             <corners android:radius="100dip" />

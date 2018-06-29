@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <uexplugins>
-    <plugin uexName="uexVideo" version="4.1.8" build = "18">
+    <plugin uexName="uexVideo" version="4.2.0" build = "20">
+        <info>20:新版本uexVideo插件,退出时恢复状态栏</info>
+        <info>19:新版本uexVideo插件</info>
         <info>18:支持播放https协议的视频</info>
         <info>17:调用closePlayerWarn后,设置竖屏返回</info>
         <info>16:openPlayer接口新增orientationAfterExit参数</info>

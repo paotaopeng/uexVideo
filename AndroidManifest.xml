@@ -18,7 +18,7 @@
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
         android:debuggable="true"
-        android:label="uexVideo" >
+        android:label="uexVideo1" >
         <activity
             android:name="org.zywx.wbpalmstar.engine.LoadingActivity"
             android:configChanges="keyboardHidden|orientation"

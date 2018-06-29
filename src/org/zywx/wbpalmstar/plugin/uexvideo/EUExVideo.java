@@ -68,6 +68,7 @@ public class EUExVideo extends EUExBase implements Parcelable {
     public static final String F_CALLBACK_ON_PLAYER_FINISH = "uexVideo.onPlayerFinish";
     public static final String F_CALLBACK_ON_PLAYER_ENDTIME = "uexVideo.onPlayerEndTime";
     public static final String CALLBACK_ON_VIDEO_PICKER_CLOSED = "uexVideo.onVideoPickerClosed";
+    public static final String CALLBACK_ON_WORD_CLICK= "uexVideo.onWordClick";
 
     private ResoureFinder finder;
 
@@ -240,6 +241,16 @@ public class EUExVideo extends EUExBase implements Parcelable {
         // adptLayoutParams(params, lp);
         // Log.i(TAG, "addView2CurrentWindow");
         mBrwView.addViewToCurrentWindow(child, lp);
+    }
+
+    public void onWordClick(String word){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("word", word); //返回的时间单位为秒
+            callBackPluginJs(EUExVideo.CALLBACK_ON_WORD_CLICK, jsonObject.toString());
+        } catch (JSONException e) {
+            Log.i(TAG, String.valueOf(e.getMessage()));
+        }
     }
 
     public void closePlayerWarn(String[] params){

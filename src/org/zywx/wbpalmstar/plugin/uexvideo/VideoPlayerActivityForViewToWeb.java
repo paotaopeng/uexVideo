@@ -132,6 +132,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
     private boolean canSeek;//是否允许拖动进度条
     private String title;//视频标题
     private String exitMsgContent;//退出视频标题
+    private String videoSize;//视频大小
     private int passTime;
     private int totalTime;
     private int orientation;//屏幕方向
@@ -146,6 +147,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
     private static final int PLAYER_STATUS_BUFFERING = 1;
     private static final int PLAYER_STATUS_PLAYING = 2;
     private static final int PALYER_STATUS_ERROR = 3;
+
     //字幕相关
     private List<Lyric> lyricList;
     private ImageView ivPreLyric;
@@ -274,6 +276,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         canSeek = config.canSeek;
         title = config.title;
         exitMsgContent = config.exitMsgContent;
+        videoSize=config.videoSize;
         setScreenSize();
         setContentView(finder.getLayoutId("plugin_video_player_main2"));
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//强制横屏
@@ -282,7 +285,6 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         m_display.getHolder().setKeepScreenOn(true);
         m_display.getHolder().addCallback(callback);
         handler.post(checkPlayTimeRunnable);
-        handler.post(showLyricTextRunnable);
         UIUtils.setStatusBarTransparent(this.getParent());
         //初始化获取音量属性
         mAudioManager = (AudioManager)getSystemService(Service.AUDIO_SERVICE);
@@ -422,6 +424,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         //非Wifi
         noWifiLayout=(LinearLayout)findViewById(finder.getId("plugin_video_layout_none_wifi"));
         watchInNoneWifi=(TextView)findViewById(finder.getId("plugin_video_tv_none_wifi"));
+        watchInNoneWifi.setText("继续观看("+videoSize+")");
         watchInNoneWifi.setOnClickListener(this);
     }
 
@@ -609,6 +612,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
             startTime = 0;
             m_ivPlayPause.setBackgroundResource(finder.getDrawableId("plugin_video_play"));
         }
+        handler.post(showLyricTextRunnable);
         passTime = mediaPlayer.getCurrentPosition();
         totalTime = mediaPlayer.getDuration();
         m_tvPassTime.setText(formatTime(passTime) + "/" + formatTime(totalTime));
@@ -690,7 +694,6 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//强制横屏
         }
-
         mUexBaseObj.closePlayerCallBack(videoPath, progressOnClose);
     }
 
@@ -784,6 +787,7 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
         float endTime = Float.parseFloat(lyric.getLyricEndTime()) * 1000;
         int position = mediaPlayer.getCurrentPosition();
         if (startTime <= position && endTime >= position) {
+
             tvLyric.setText(lyric.getLyricEnglishText());
         } else {
             tvLyric.setText("");
@@ -945,7 +949,9 @@ public class VideoPlayerActivityForViewToWeb extends Activity implements OnPrepa
                 onPlayEndTime();
             } else {
                 mediaPlayer.seekTo(seekBar.getProgress());
-                showLyricText();
+                if(hasLyric){
+                    showLyricText();
+                }
             }
             isUserSeekingBar = false;
         }
